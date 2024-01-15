@@ -23,7 +23,7 @@ This plan mirrors the 8-hour spine in design.md §15. Each parent task correspon
   - [x] 2.4 Create `backend/app/agents/state.py` with the `PipelineState` `TypedDict` from design §LangGraph State & Wiring.
   - [x] 2.5 Create `backend/app/agents/ingestion.py` exporting `run(state)` that calls `gemini_client.invoke` with Gemini native PDF understanding for the contract bytes, falls back to a `pdf_parser.extract_text` shim on empty/error, attaches `language` to each `Clause`, and returns `{clauses, language}`.
   - [x] 2.6 Create `backend/app/agents/clause_analysis.py` exporting `run(state)` that emits one `ClauseAnalysis` per input clause in order, with `summary` and `key_terms` in the contract `language`.
-  - [ ]* 2.7 Add `backend/tests/test_ingestion_smoke.py` exercising `ingestion.run` against a tiny EN string and a tiny VI string with the Gemini client mocked to return canned JSON.
+  - [x]* 2.7 Add `backend/tests/test_ingestion_smoke.py` exercising `ingestion.run` against a tiny EN string and a tiny VI string with the Gemini client mocked to return canned JSON.
   - _Validates: Requirements 1.6, 1.7, 1.8, 1.9, 2.3, 6.1, 6.2, 6.4, 9.1, 9.2, 9.3_
 
 - [x] 3. H2 — Remaining agents, LangGraph wiring, deterministic scoring
@@ -32,7 +32,7 @@ This plan mirrors the 8-hour spine in design.md §15. Each parent task correspon
   - [x] 3.3 Implement `backend/app/agents/policy_mapping.py`, `backend/app/agents/risk_simulation.py`, `backend/app/agents/recommendation.py`, and `backend/app/agents/report.py`, each exporting `run(state)` that calls `gemini_client.invoke` with the matching prompt and Pydantic schema and returns a partial state dict.
   - [x] 3.4 Create `backend/app/agents/graph.py` building the LangGraph `StateGraph(PipelineState)` with the linear edges Ingestion → Clause Analysis → Policy Mapping → Risk Simulation → Recommendation → Report → END as in design §LangGraph State & Wiring.
   - [x] 3.5 Create `backend/app/services/risk_scoring.py` implementing `score(violations) -> (per_category: PerCategoryScores, overall: int)` using the exact `SEVERITY_WEIGHTS` and `CATEGORY_WEIGHTS` constants and the cap-then-weighted-mean-then-`round` formula from design §Risk Scoring Algorithm.
-  - [ ]* 3.6 Add `backend/tests/test_risk_scoring_worked_example.py` asserting `score(...)` returns `(legal=45, financial=100, operational=15, compliance=5, data_privacy=100)` and overall `50` for the ten-violation worked example in design §Risk Scoring Algorithm.
+  - [x]* 3.6 Add `backend/tests/test_risk_scoring_worked_example.py` asserting `score(...)` returns `(legal=45, financial=100, operational=15, compliance=5, data_privacy=100)` and overall `50` for the ten-violation worked example in design §Risk Scoring Algorithm.
   - _Validates: Requirements 2.1, 2.2, 2.4, 2.5, 2.6, 2.7, 4.1, 4.2, 4.3, 4.5, 6.1, 6.4, 9.4, 9.5_
 
 - [x] 4. H3 — FastAPI surface + governance services
@@ -41,7 +41,7 @@ This plan mirrors the 8-hour spine in design.md §15. Each parent task correspon
   - [x] 4.3 Create `backend/app/services/pdf_parser.py` exporting `extract_text(bytes) -> str` using `pdfplumber`, returning `""` on failure so the ingestion fallback can record the path in the audit trail.
   - [x] 4.4 Create `backend/app/api/routes_upload.py` (`POST /api/upload`, 15 MB cap with 413 `FILE_TOO_LARGE`, MIME allow-list with 415 `UNSUPPORTED_MEDIA_TYPE`, persists files in `job_store` and returns `{job_id, contract_filename, policy_filename, detected_language}`), `routes_analyze.py` (`POST /api/analyze` driving `agents.graph.build_graph().invoke(state)`, merging deterministic scores from `risk_scoring.score`, returning a `GovernanceReport` JSON, mapping unhandled agent exceptions to 502 `AGENT_FAILURE` and validation exhaustion to 502 `AGENT_OUTPUT_INVALID`), `routes_simulate.py` (`POST /api/simulate` rejecting unknown keys with 400 `UNKNOWN_SCENARIO`), `routes_audit.py` (`GET /api/audit-trail/{job_id}` returning entries in chronological order with 404 `JOB_NOT_FOUND`), `routes_report.py` (`GET /api/report/{job_id}` returning 409 `REPORT_NOT_READY` when no report yet — PDF body wired in Task 8), and `routes_health.py` (`GET /api/health` → `{status, version, gemini_configured}`).
   - [x] 4.5 Create `backend/app/main.py` constructing the FastAPI app, attaching CORS for `FRONTEND_ORIGIN` (comma-separated, allow `*.vercel.app` previews), installing the redaction logging filter, and mounting all six routers under `/api`.
-  - [ ]* 4.6 Add `backend/tests/test_api_errors.py` covering the 413, 415, 400 `UNKNOWN_SCENARIO`, 404 `JOB_NOT_FOUND`, and 409 `REPORT_NOT_READY` paths via `TestClient` with the agents mocked.
+  - [x]* 4.6 Add `backend/tests/test_api_errors.py` covering the 413, 415, 400 `UNKNOWN_SCENARIO`, 404 `JOB_NOT_FOUND`, and 409 `REPORT_NOT_READY` paths via `TestClient` with the agents mocked.
   - _Validates: Requirements 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2.8, 2.9, 5.1, 5.2, 5.3, 5.4, 5.5, 6.3, 6.5, 7.3, 8.1, 8.2, 8.3, 8.5, 8.6, 8.7, 10.4, 10.5, 10.6_
 
 - [x] 5. H4 — Frontend skeleton
@@ -50,7 +50,7 @@ This plan mirrors the 8-hour spine in design.md §15. Each parent task correspon
   - [x] 5.3 Create `frontend/src/lib/types.ts` mirroring the Pydantic shapes (`Clause`, `ClauseAnalysis`, `Violation`, `SimulationResult`, `Recommendation`, `PerCategoryScores`, `GovernanceReport`, `AuditEntry`).
   - [x] 5.4 Create `frontend/src/store/useAnalysisStore.ts` exactly as defined in design §Frontend State Machine with the actions `upload`, `analyze`, `simulate`, `downloadReport`, `loadSample`, `reset` and the `Status`/`AgentName` unions.
   - [x] 5.5 Build `frontend/src/App.tsx` (router shell), `frontend/src/components/Header.tsx`, `frontend/src/routes/UploadPage.tsx`, and `frontend/src/components/UploadDropzone.tsx` (drag-and-drop for contract + policy, calling `store.actions.upload`).
-  - [ ]* 5.6 Add `frontend/src/api/__tests__/client.test.ts` (Vitest) verifying `client.ts` constructs URLs from `VITE_API_BASE_URL` and surfaces `error_code` on non-2xx.
+  - [x]* 5.6 Add `frontend/src/api/__tests__/client.test.ts` (Vitest) verifying `client.ts` constructs URLs from `VITE_API_BASE_URL` and surfaces `error_code` on non-2xx.
   - _Validates: Requirements 1.1, 8.1, 11.1, 11.4_
 
 - [x] 6. H5 — Dashboard core (gauge, heatmap, clauses, simulation)
@@ -59,7 +59,7 @@ This plan mirrors the 8-hour spine in design.md §15. Each parent task correspon
   - [x] 6.3 Build `frontend/src/components/KeyClausesList.tsx` showing each clause's `heading`, `clause_type`, and `summary` from `report.clauses` joined with `report.clause_analyses`.
   - [x] 6.4 Build `frontend/src/components/SimulationPanel.tsx` with one `Button` per `force_majeure | penalty_delay | data_breach | termination | payment_default`, each calling `store.actions.simulate(key)` and rendering the returned `impact_score`, `affected_clause_ids`, and `narrative`.
   - [x] 6.5 Wire `frontend/src/routes/DashboardPage.tsx` to compose the four components above and show shadcn `Skeleton` placeholders for each section while `status === "analyzing"`.
-  - [ ]* 6.6 Add `frontend/src/lib/__tests__/banding.test.ts` (Vitest) snapshotting the green/amber/red boundaries at 0, 33, 34, 66, 67, 100.
+  - [x]* 6.6 Add `frontend/src/lib/__tests__/banding.test.ts` (Vitest) snapshotting the green/amber/red boundaries at 0, 33, 34, 66, 67, 100.
   - _Validates: Requirements 3.1, 3.2, 3.3, 3.4, 3.5, 8.3, 8.7, 11.6_
 
 - [x] 7. H6 — Recommendations diff, audit panel, sample button, download button
@@ -88,10 +88,10 @@ This plan mirrors the 8-hour spine in design.md §15. Each parent task correspon
   - _Validates: Requirements 8.6, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7_
 
 - [x] 10. Property-based test suite (Hypothesis)
-  - [ ]* 10.1 Implement `backend/tests/test_segmentation.py` with Hypothesis strategies for EN/VI contract text, exercising **Property 1** (language detection round-trip), **Property 2** (`contract_text[c.char_span.start:c.char_span.end] == c.text` and unique `clause_id`), and **Property 17** (bilingual NL fields stay in detected language).
+  - [x]* 10.1 Implement `backend/tests/test_segmentation.py` with Hypothesis strategies for EN/VI contract text, exercising **Property 1** (language detection round-trip), **Property 2** (`contract_text[c.char_span.start:c.char_span.end] == c.text` and unique `clause_id`), and **Property 17** (bilingual NL fields stay in detected language).
     - _Validates: Requirements 1.8, 1.9, 9.1, 9.2, 9.3, 9.4_
     - _Validates: Properties 1, 2, 17_
-  - [ ]* 10.2 Implement `backend/tests/test_taxonomy.py` covering **Property 4** (Violation references only known ids and taxonomy keys), **Property 5** (Risk Simulation emits exactly the five MVP scenario keys with `impact_score ∈ [0, 100]`), **Property 6** (recommendations gated on `severity ∈ {medium, high, critical}`), and **Property 16** (taxonomy stability across EN/VI).
+  - [x]* 10.2 Implement `backend/tests/test_taxonomy.py` covering **Property 4** (Violation references only known ids and taxonomy keys), **Property 5** (Risk Simulation emits exactly the five MVP scenario keys with `impact_score ∈ [0, 100]`), **Property 6** (recommendations gated on `severity ∈ {medium, high, critical}`), and **Property 16** (taxonomy stability across EN/VI).
     - _Validates: Requirements 2.4, 2.5, 2.6, 4.5, 6.1, 9.5_
     - _Validates: Properties 4, 5, 6, 16_
   - [x]* 10.3 Implement `backend/tests/test_risk_scoring.py` covering **Property 7** (heatmap `band(score)` total function on `[0, 100]`), **Property 8** (per-category score formula with cap), **Property 9** (overall risk score formula with rounded weighted mean), and **Property 10** (scoring idempotence under (category, severity) multiset preservation).
@@ -103,7 +103,7 @@ This plan mirrors the 8-hour spine in design.md §15. Each parent task correspon
   - [x]* 10.5 Implement `backend/tests/test_audit_trail.py` covering **Property 11** (`AuditEntry` shape: 64-char SHA-256 fields, ISO-8601 timestamp, `latency_ms ≥ 0`, non-empty `agent_name` / `model_version`), **Property 12** (`GET /api/audit-trail/{job_id}` returns entries in non-decreasing `timestamp_iso8601` order), **Property 14** (one repair retry succeeds when the second Gemini response is valid; exactly two calls observed), and **Property 15** (every assembled system prompt begins with the canonical `GUARDRAIL` block).
     - _Validates: Requirements 5.1, 5.2, 6.2, 6.4_
     - _Validates: Properties 11, 12, 14, 15_
-  - [ ]* 10.6 Implement `backend/tests/test_clause_analysis.py` covering **Property 3**: for any `Clause` list passed to the Clause Analysis Agent, the emitted `analyses` list has the same length and the multiset of `clause_id` values is preserved.
+  - [x]* 10.6 Implement `backend/tests/test_clause_analysis.py` covering **Property 3**: for any `Clause` list passed to the Clause Analysis Agent, the emitted `analyses` list has the same length and the multiset of `clause_id` values is preserved.
     - _Validates: Requirements 2.3_
     - _Validates: Property 3_
 
