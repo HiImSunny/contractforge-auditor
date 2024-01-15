@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`banding > band() > should return 'amber' for score 34 1`] = `"amber"`;
+
+exports[`banding > band() > should return 'amber' for score 50 1`] = `"amber"`;
+
+exports[`banding > band() > should return 'amber' for score 66 1`] = `"amber"`;
+
+exports[`banding > band() > should return 'green' for score 0 1`] = `"green"`;
+
+exports[`banding > band() > should return 'green' for score 1 1`] = `"green"`;
+
+exports[`banding > band() > should return 'green' for score 33 1`] = `"green"`;
+
+exports[`banding > band() > should return 'red' for score 67 1`] = `"red"`;
+
+exports[`banding > band() > should return 'red' for score 99 1`] = `"red"`;
+
+exports[`banding > band() > should return 'red' for score 100 1`] = `"red"`;
