@@ -20,11 +20,12 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install WeasyPrint system dependencies (fonts, Pango, Cairo)
+# Note: libgdk-pixbuf2.0-0 was replaced by libgdk-pixbuf-xlib-2.0-0 in Debian 13+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
     libcairo2 \
-    libgdk-pixbuf2.0-0 \
+    libgdk-pixbuf-xlib-2.0-0 \
     libffi-dev \
     shared-mime-info \
     fonts-liberation \

@@ -10,18 +10,19 @@ describe("client.ts", () => {
 
   beforeEach(() => {
     fetchMock = vi.fn();
-    global.fetch = fetchMock;
+    vi.stubGlobal("fetch", fetchMock);
   });
 
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
   describe("URL construction from VITE_API_BASE_URL", () => {
     it("should construct URLs using VITE_API_BASE_URL environment variable", async () => {
       // The BASE_URL is read at module load time from import.meta.env.VITE_API_BASE_URL
-      // This test verifies that the client correctly uses the configured base URL
-      const baseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+      // In test environment, VITE_API_BASE_URL is not set so it defaults to localhost:8000
+      const baseUrl = "http://localhost:8000";
 
       fetchMock.mockResolvedValueOnce({
         ok: true,
@@ -38,8 +39,6 @@ describe("client.ts", () => {
 
     it("should use localhost:8000 as default when VITE_API_BASE_URL is not set", async () => {
       // When VITE_API_BASE_URL is undefined, the client defaults to localhost:8000
-      const expectedUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
-
       fetchMock.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ success: true }),
@@ -58,7 +57,7 @@ describe("client.ts", () => {
     });
 
     it("should correctly append path to base URL", async () => {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+      const baseUrl = "http://localhost:8000";
 
       fetchMock.mockResolvedValueOnce({
         ok: true,

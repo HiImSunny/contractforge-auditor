@@ -8,7 +8,7 @@ export class ApiError extends Error {
     public readonly status: number,
     public readonly error_code: string,
     message: string,
-    public readonly data?: unknown
+    public readonly data?: Record<string, unknown>
   ) {
     super(message);
     this.name = "ApiError";
