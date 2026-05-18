@@ -91,30 +91,35 @@ See [`frontend/.env.example`](frontend/.env.example) for a template.
 
 ## Lobster Trap — Deep Prompt Inspection (Veea)
 
-ContractForge Auditor integrates [Lobster Trap](https://github.com/veeainc/lobstertrap) (MIT), a DPI tool by Veea that performs **pre-flight inspection** on every prompt before it reaches Gemini.
+ContractForge Auditor integrates [Lobster Trap](https://github.com/veeainc/lobstertrap) (MIT) by Veea for pre-flight DPI on every prompt before it reaches Gemini. The integration has **two layers** so security is active in all environments — including production on Render where running a Go binary sidecar is not feasible:
 
 ```
-ContractForge Agent
-        │
-        ▼
-POST /v1/chat/completions
-        │
-  Lobster Trap :8080
-  (regex DPI, sub-ms)
-        │
-   verdict = ALLOW ──────────────► Gemini API (direct)
-        │
-   verdict = DENY/QUARANTINE ────► LobsterTrapBlockedError
-                                   (prompt never reaches Gemini)
+Every Gemini call:
+
+  ContractForge Agent
+         │
+         ▼
+  DPI Inspection (pre-flight)
+  ┌──────────────────────────────────────────────────────┐
+  │ Layer 1 — Lobster Trap binary  (local / Docker)      │
+  │   LOBSTERTRAP_URL set → POST :8080/v1/chat/...       │
+  │   Go binary, sub-ms, full dashboard at /_lobstertrap │
+  │                                                      │
+  │ Layer 2 — Python lite-DPI  (production / Render)     │
+  │   LOBSTERTRAP_URL empty → dpi_inspector.py           │
+  │   Same regex patterns, same policy rules, no binary  │
+  └──────────────────────────────────────────────────────┘
+         │
+  verdict = ALLOW ──────────────► Gemini API (direct)
+  verdict = DENY/QUARANTINE ────► Blocked, never sent
 ```
 
-Lobster Trap uses **regex-based DPI** (no LLM calls, sub-millisecond latency) to extract structured metadata: intent category, risk score, injection patterns, credentials, PII, exfiltration patterns, obfuscation, etc.
+Both layers use the same 8 detection signals and return the same verdict format. `gemini_client.py` treats them identically.
 
 ### Policy Pack
 
-The policy file at [`configs/lobstertrap_policy.yaml`](configs/lobstertrap_policy.yaml) defines rules tailored for legal contract governance:
-
-**Ingress rules (prompt inspection):**
+[`configs/lobstertrap_policy.yaml`](configs/lobstertrap_policy.yaml) — used by the Lobster Trap binary.
+[`backend/app/services/dpi_inspector.py`](backend/app/services/dpi_inspector.py) — Python implementation of the same rules.
 
 | Rule | Action | Detects |
 |---|---|---|
@@ -125,37 +130,26 @@ The policy file at [`configs/lobstertrap_policy.yaml`](configs/lobstertrap_polic
 | `block_system_commands` | DENY | Shell commands + risk_score ≥ 0.3 |
 | `block_sensitive_paths` | DENY | `/etc/`, `.ssh/`, `.env` paths |
 | `block_obfuscation` | DENY | Encoding/evasion techniques |
-| `quarantine_high_risk` | QUARANTINE | risk_score ≥ 0.75 |
-| `log_medium_risk` | LOG | risk_score ≥ 0.4 |
-| `log_all_agent_calls` | LOG | Every agent call (full audit trail) |
-
-**Egress rules (response inspection):**
-
-| Rule | Action | Detects |
-|---|---|---|
+| `quarantine_high_risk` | QUARANTINE | Composite risk_score ≥ 0.75 |
 | `block_credential_leak_response` | DENY | Credentials in model output |
 | `block_pii_leak_response` | DENY | PII in model output (defence-in-depth) |
-| `log_high_risk_response` | LOG | High-risk responses |
 
-### Running with Lobster Trap (Docker Compose)
+### Running with Lobster Trap binary (Docker Compose)
 
 ```bash
-# Copy and fill in environment variables
 cp backend/.env.example backend/.env
 # Edit backend/.env — set GOOGLE_API_KEY
 
-# Start both backend and Lobster Trap (builds LT from source via Go 1.22+)
 docker compose up --build
-
-# Backend API:    http://localhost:8000/api/health
-# Dashboard UI:   http://localhost:8080/_lobstertrap/
+# Backend API:   http://localhost:8000/api/health
+# LT Dashboard:  http://localhost:8080/_lobstertrap/
 ```
 
-The `LOBSTERTRAP_URL=http://lobstertrap:8080` env var is set automatically in `docker-compose.yml`.
+`LOBSTERTRAP_URL=http://lobstertrap:8080` is set automatically in `docker-compose.yml`.
 
-### Running without Lobster Trap
+### Running on Render / Vercel (production)
 
-Leave `LOBSTERTRAP_URL` empty (or unset) in your `.env`. The backend calls Gemini directly. Application-level guardrails (GUARDRAIL prompt prefix, Pydantic validation, PII redaction, audit log) remain active.
+No extra setup. Leave `LOBSTERTRAP_URL` unset — the Python lite-DPI fallback (`dpi_inspector.py`) activates automatically. All 8 detection signals and the same DENY/QUARANTINE rules apply.
 
 ---
 
@@ -171,7 +165,7 @@ Leave `LOBSTERTRAP_URL` empty (or unset) in your `.env`. The backend calls Gemin
 
 This project is submitted to two tracks:
 
-**Agent Security & AI Governance (Track 1 — powered by Veea)** — Every Gemini call is preceded by a pre-flight DPI inspection via [Lobster Trap](https://github.com/veeainc/lobstertrap), Veea's open-source prompt inspection tool. Lobster Trap uses regex-based DPI (sub-millisecond, no LLM calls) to detect prompt injection, credential leaks, exfiltration patterns, role impersonation, and obfuscation — blocking the call before it ever reaches Gemini if the verdict is DENY or QUARANTINE. On top of the network layer, every call is logged in an auditable trail with SHA-256 input/output hashes, ISO timestamps, model version, and latency. All agent outputs are validated against strict Pydantic v2 schemas with a single repair retry. Anti-injection guardrails are prepended to every system prompt. PII (email, phone, government IDs) is regex-redacted before any free-text field touches a log line.
+**Agent Security & AI Governance (Track 1 — powered by Veea)** — Every Gemini call is preceded by pre-flight DPI via [Lobster Trap](https://github.com/veeainc/lobstertrap) (Veea). Locally/Docker: the real Go binary inspects prompts at sub-ms speed with a live dashboard. On Render (production): a Python lite-DPI fallback (`dpi_inspector.py`) runs the same regex patterns and policy rules — no binary needed. Both paths detect and block prompt injection, credential leaks, exfiltration, role impersonation, and obfuscation before the prompt ever reaches Gemini. On top of DPI, every call is logged with SHA-256 hashes, ISO timestamps, model version, and latency. Agent outputs are validated against Pydantic v2 schemas with repair retry. Anti-injection guardrails prefix every prompt. PII is regex-redacted from all logs.
 
 **Gemini Agents (Track 2)** — Six specialised Gemini agents are orchestrated through LangGraph: Ingestion & Extraction, Clause Analysis, Policy Compliance & Mapping, Risk Simulation, Governance & Recommendation, and Report Generation. The pipeline exercises Gemini's native PDF understanding, structured JSON output, and bilingual EN/VI reasoning.
 

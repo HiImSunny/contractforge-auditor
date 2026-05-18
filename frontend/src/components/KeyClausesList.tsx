@@ -1,6 +1,5 @@
 import type { Clause, ClauseAnalysis } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 interface Props {
   clauses: Clause[];

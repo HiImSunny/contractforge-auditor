@@ -121,47 +121,60 @@ def _sha256(text: str) -> str:
 
 
 def _inspect_with_lobstertrap(prompt: str, agent_name: str) -> dict:
-    """Send prompt to Lobster Trap for DPI inspection before calling Gemini.
+    """Inspect *prompt* using Lobster Trap binary or the Python lite-DPI fallback.
 
-    Lobster Trap (https://github.com/veeainc/lobstertrap) is a deep prompt
-    inspection proxy by Veea. It runs locally on port 8080 and exposes an
-    OpenAI-compatible endpoint. We use it as a pre-flight inspector: POST
-    the prompt, read the ``_lobstertrap`` verdict, and block the Gemini call
-    if the verdict is DENY or QUARANTINE.
+    Two paths:
+    1. ``LOBSTERTRAP_URL`` is set → POST to the Lobster Trap binary running
+       locally (e.g. via Docker Compose). Returns the ``_lobstertrap`` field
+       from the response. This is the full Go binary with sub-ms regex DPI.
 
-    Returns the ``_lobstertrap`` metadata dict (empty dict if proxy is
-    unreachable — fail-open so the pipeline keeps working without the proxy).
+    2. ``LOBSTERTRAP_URL`` is empty (e.g. production on Render) → run the
+       Python lite-DPI fallback in ``services.dpi_inspector``. Same regex
+       patterns and policy rules as ``configs/lobstertrap_policy.yaml``,
+       same output format. No binary required.
+
+    Both paths return a dict with at minimum ``{"verdict": "ALLOW"|"DENY"|"QUARANTINE"}``.
     """
     import urllib.request
     import urllib.error
 
     lobstertrap_url = os.environ.get("LOBSTERTRAP_URL", "").rstrip("/")
-    if not lobstertrap_url:
-        return {}  # proxy not configured — skip inspection
 
-    payload = json.dumps({
-        "model": "contractforge-agent",
-        "messages": [{"role": "user", "content": prompt}],
-        "_lobstertrap": {
-            "declared_intent": "data_access",
-            "agent_id": f"contractforge/{agent_name}",
-        },
-    }).encode("utf-8")
+    if lobstertrap_url:
+        # ── Path 1: Lobster Trap binary ───────────────────────────────────
+        payload = json.dumps({
+            "model": "contractforge-agent",
+            "messages": [{"role": "user", "content": prompt}],
+            "_lobstertrap": {
+                "declared_intent": "data_access",
+                "agent_id": f"contractforge/{agent_name}",
+            },
+        }).encode("utf-8")
 
-    req = urllib.request.Request(
-        f"{lobstertrap_url}/v1/chat/completions",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
+        req = urllib.request.Request(
+            f"{lobstertrap_url}/v1/chat/completions",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
 
+        try:
+            with urllib.request.urlopen(req, timeout=2) as resp:
+                body = json.loads(resp.read().decode("utf-8"))
+                lt_meta = body.get("_lobstertrap", {})
+                lt_meta["inspector"] = "lobstertrap-binary"
+                return lt_meta
+        except (urllib.error.URLError, json.JSONDecodeError, OSError):
+            # Binary unreachable — fall through to Python fallback
+            pass
+
+    # ── Path 2: Python lite-DPI fallback ─────────────────────────────────
     try:
-        with urllib.request.urlopen(req, timeout=2) as resp:
-            body = json.loads(resp.read().decode("utf-8"))
-            return body.get("_lobstertrap", {})
-    except (urllib.error.URLError, json.JSONDecodeError, OSError):
-        # Proxy unreachable or returned non-JSON — fail-open
-        return {}
+        from app.services.dpi_inspector import inspect as dpi_inspect  # type: ignore[import]
+        result = dpi_inspect(prompt)
+        return result.to_dict()
+    except ImportError:
+        return {}  # dpi_inspector not available — fail-open
 
 
 class LobsterTrapBlockedError(Exception):

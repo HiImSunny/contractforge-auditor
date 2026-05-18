@@ -1,4 +1,4 @@
-import { band, BAND_CLASSES, BAND_BAR_CLASSES } from "@/lib/banding";
+import { band, BAND_BAR_CLASSES } from "@/lib/banding";
 import type { PerCategoryScores } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
