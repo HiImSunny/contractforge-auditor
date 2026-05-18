@@ -28,8 +28,8 @@ export async function upload(contract: File, policy: File): Promise<UploadRespon
   });
 }
 
-export async function analyze(jobId: string): Promise<GovernanceReport> {
-  return apiFetch<GovernanceReport>("/api/analyze", {
+export async function analyze(jobId: string): Promise<{ status: string; job_id: string }> {
+  return apiFetch("/api/analyze", {
     method: "POST",
     body: JSON.stringify({ job_id: jobId }),
   });
@@ -39,34 +39,42 @@ export async function analyzeWithProgress(
   jobId: string,
   onProgress: (p: AgentProgress) => void
 ): Promise<GovernanceReport> {
-  // Start the analysis (long-running)
-  const analyzePromise = analyze(jobId);
+  // Kick off the pipeline (returns immediately with status: "processing")
+  await analyze(jobId);
 
-  // Poll audit trail every 1.5s to infer agent progress
-  const interval = setInterval(async () => {
-    try {
-      const entries = await getAuditTrail(jobId);
-      const completedAgents = entries
-        .map((e) => e.agent_name as AgentName)
-        .filter((name) => AGENT_ORDER.includes(name));
+  // Poll both status endpoint and audit trail every 2s
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(async () => {
+      try {
+        // Update agent progress from audit trail
+        const entries = await getAuditTrail(jobId);
+        const completedAgents = entries
+          .map((e) => e.agent_name as AgentName)
+          .filter((name) => AGENT_ORDER.includes(name));
+        const newCompleted = [...new Set(completedAgents)];
+        const nextIdx = newCompleted.length;
+        const current = nextIdx < AGENT_ORDER.length ? AGENT_ORDER[nextIdx] : null;
+        onProgress({ current, completed: newCompleted });
 
-      const newCompleted = [...new Set(completedAgents)];
-      const nextIdx = newCompleted.length;
-      const current = nextIdx < AGENT_ORDER.length ? AGENT_ORDER[nextIdx] : null;
+        // Check pipeline status
+        const statusRes = await apiFetch<{ status: string; report?: GovernanceReport; error?: unknown }>(
+          `/api/analyze/status/${jobId}`
+        );
 
-      onProgress({ current, completed: newCompleted });
-    } catch {}
-  }, 1500);
-
-  try {
-    const report = await analyzePromise;
-    clearInterval(interval);
-    onProgress({ current: null, completed: [...AGENT_ORDER] });
-    return report;
-  } catch (e) {
-    clearInterval(interval);
-    throw e;
-  }
+        if (statusRes.status === "done" && statusRes.report) {
+          clearInterval(interval);
+          onProgress({ current: null, completed: [...AGENT_ORDER] });
+          resolve(statusRes.report);
+        } else if (statusRes.status === "error") {
+          clearInterval(interval);
+          reject(statusRes.error ?? { error_code: "AGENT_FAILURE", message: "Pipeline failed" });
+        }
+      } catch (e) {
+        clearInterval(interval);
+        reject(e);
+      }
+    }, 2000);
+  });
 }
 
 export async function simulate(jobId: string, scenarioKey: string): Promise<SimulationResult> {
