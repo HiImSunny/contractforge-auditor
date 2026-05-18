@@ -9,19 +9,13 @@ const CATEGORY_LABELS: Record<keyof PerCategoryScores, string> = {
   data_privacy: "Data Privacy",
 };
 
-// 10 cells per row, each cell = 10 points
-const CELLS = 10;
+const CELLS = 10; // each cell = 10 points
 
-function cellColor(cellIndex: number, score: number): string {
-  const threshold = cellIndex * 10; // cell i lights up when score > i*10
-  if (score <= threshold) return "bg-muted/40 border border-border";
-
-  // Color based on which zone the score falls in
+// All filled cells get the same color based on the category's score band
+function filledColor(score: number): string {
   if (score <= 33) return "bg-green-500";
   if (score <= 66) return "bg-amber-500";
-  // red zone — gradient: lighter red for early cells, deeper for later
-  const intensity = cellIndex >= 7 ? "bg-red-600" : cellIndex >= 5 ? "bg-red-500" : "bg-red-400";
-  return intensity;
+  return "bg-red-500";
 }
 
 interface Props {
@@ -46,31 +40,30 @@ export default function RiskHeatmap({ scores }: Props) {
 
       {(Object.keys(CATEGORY_LABELS) as Array<keyof PerCategoryScores>).map((cat) => {
         const score = scores[cat] ?? 0;
+        // How many cells to fill: score=30 → 3 cells, score=80 → 8 cells
+        const filledCells = Math.round(score / 10);
+        const color = filledColor(score);
         const scoreColor =
           score <= 33 ? "text-green-600" : score <= 66 ? "text-amber-600" : "text-red-600";
 
         return (
           <div key={cat} className="flex items-center gap-2">
-            {/* Label */}
             <span className="text-xs font-medium w-24 shrink-0 truncate">
               {CATEGORY_LABELS[cat]}
             </span>
 
-            {/* Heat cells */}
             <div className="flex-1 flex gap-0.5">
               {Array.from({ length: CELLS }).map((_, i) => (
                 <div
                   key={i}
                   className={cn(
                     "flex-1 h-5 rounded-sm transition-colors",
-                    cellColor(i, score)
+                    i < filledCells ? color : "bg-muted/40 border border-border"
                   )}
-                  title={`${(i + 1) * 10}`}
                 />
               ))}
             </div>
 
-            {/* Score */}
             <span className={cn("text-xs font-bold w-8 text-right tabular-nums", scoreColor)}>
               {score}
             </span>
