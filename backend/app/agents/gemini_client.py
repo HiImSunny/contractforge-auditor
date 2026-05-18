@@ -120,44 +120,111 @@ def _sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def _call_gemini(prompt: str) -> str:
+def _inspect_with_lobstertrap(prompt: str, agent_name: str) -> dict:
+    """Send prompt to Lobster Trap for DPI inspection before calling Gemini.
+
+    Lobster Trap (https://github.com/veeainc/lobstertrap) is a deep prompt
+    inspection proxy by Veea. It runs locally on port 8080 and exposes an
+    OpenAI-compatible endpoint. We use it as a pre-flight inspector: POST
+    the prompt, read the ``_lobstertrap`` verdict, and block the Gemini call
+    if the verdict is DENY or QUARANTINE.
+
+    Returns the ``_lobstertrap`` metadata dict (empty dict if proxy is
+    unreachable — fail-open so the pipeline keeps working without the proxy).
+    """
+    import urllib.request
+    import urllib.error
+
+    lobstertrap_url = os.environ.get("LOBSTERTRAP_URL", "").rstrip("/")
+    if not lobstertrap_url:
+        return {}  # proxy not configured — skip inspection
+
+    payload = json.dumps({
+        "model": "contractforge-agent",
+        "messages": [{"role": "user", "content": prompt}],
+        "_lobstertrap": {
+            "declared_intent": "data_access",
+            "agent_id": f"contractforge/{agent_name}",
+        },
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        f"{lobstertrap_url}/v1/chat/completions",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=2) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+            return body.get("_lobstertrap", {})
+    except (urllib.error.URLError, json.JSONDecodeError, OSError):
+        # Proxy unreachable or returned non-JSON — fail-open
+        return {}
+
+
+class LobsterTrapBlockedError(Exception):
+    """Raised when Lobster Trap DPI blocks a prompt before it reaches Gemini.
+
+    Attributes:
+        verdict: The action taken (DENY, QUARANTINE, etc.)
+        deny_message: Human-readable reason from the policy rule.
+    """
+
+    def __init__(self, verdict: str, deny_message: str) -> None:
+        self.verdict = verdict
+        self.deny_message = deny_message
+        super().__init__(f"Lobster Trap blocked prompt [{verdict}]: {deny_message}")
+
+
+def _call_gemini(prompt: str, agent_name: str = "unknown", job_id: str = "") -> str:
     """Send *prompt* to Gemini and return the raw response text.
 
     Uses the model name from the ``GEMINI_MODEL`` environment variable,
     defaulting to ``"gemini-1.5-flash"``.  The ``response_mime_type`` is
     set to ``"application/json"`` so the model is constrained to emit JSON.
 
-    When ``LOBSTERTRAP_URL`` is set, all calls are routed through the
-    Lobster Trap DPI proxy (Veea) which enforces the policy in
-    ``configs/lobstertrap_policy.yaml`` before the prompt reaches Gemini.
-    This provides prompt injection detection, PII exfiltration prevention,
-    credential leak blocking, and a full governance audit trail at the
-    network layer — complementing the application-level GUARDRAIL prefix
-    and audit log already in place.
+    When ``LOBSTERTRAP_URL`` is set, the prompt is first submitted to the
+    Lobster Trap DPI proxy (Veea) for deep inspection against the policy in
+    ``configs/lobstertrap_policy.yaml``. If the verdict is DENY or QUARANTINE
+    the call is blocked and ``LobsterTrapBlockedError`` is raised — the prompt
+    never reaches Gemini. This provides a network-layer security check that
+    complements the application-level GUARDRAIL prefix already in every prompt.
     """
     import google.generativeai as genai  # type: ignore[import]
-    from google.api_core import client_options as client_options_lib  # type: ignore[import]
 
+    # ── Pre-flight DPI inspection via Lobster Trap ────────────────────────
+    lt_meta = _inspect_with_lobstertrap(prompt, agent_name)
+    if lt_meta:
+        verdict = lt_meta.get("verdict", "ALLOW")
+        if verdict in ("DENY", "QUARANTINE"):
+            ingress = lt_meta.get("ingress", {})
+            deny_message = ingress.get("deny_message", f"Blocked by Lobster Trap [{verdict}]")
+            # Log the block to the audit trail if possible
+            try:
+                from app.services.audit_log import record, AuditEntry  # type: ignore[import]
+                import datetime
+                entry = AuditEntry(
+                    job_id=job_id,
+                    agent_name=f"{agent_name}:lobstertrap_blocked",
+                    input_sha256=_sha256(prompt),
+                    output_sha256=_sha256(deny_message),
+                    timestamp_iso8601=datetime.datetime.utcnow().isoformat() + "Z",
+                    model_version=os.environ.get("GEMINI_MODEL", "gemini-1.5-flash"),
+                    latency_ms=0,
+                )
+                record(entry)
+            except ImportError:
+                pass
+            raise LobsterTrapBlockedError(verdict, deny_message)
+
+    # ── Call Gemini directly ──────────────────────────────────────────────
     api_key = os.environ.get("GOOGLE_API_KEY", "")
     model_name = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
-    lobstertrap_url = os.environ.get("LOBSTERTRAP_URL", "").rstrip("/")
 
-    if lobstertrap_url:
-        # Route through Lobster Trap DPI proxy.
-        # The proxy is OpenAI-compatible and forwards to the real Gemini
-        # endpoint (configured via LOBSTERTRAP_UPSTREAM in the proxy).
-        # We override the api_endpoint so the SDK sends to the proxy instead.
-        options = client_options_lib.ClientOptions(
-            api_endpoint=lobstertrap_url,
-        )
-        if api_key:
-            genai.configure(api_key=api_key, client_options=options)
-        else:
-            genai.configure(client_options=options)
-    else:
-        # Direct Gemini API (no proxy)
-        if api_key:
-            genai.configure(api_key=api_key)
+    if api_key:
+        genai.configure(api_key=api_key)
 
     model = genai.GenerativeModel(
         model_name=model_name,
@@ -221,7 +288,7 @@ def invoke(
     input_sha256 = _sha256(prompt)
 
     # --- First attempt ---
-    raw_response = _call_gemini(prompt)
+    raw_response = _call_gemini(prompt, agent_name=agent_name, job_id=job_id)
     output_sha256 = _sha256(raw_response)
     latency_ms = int((time.monotonic() - t0) * 1000)
 
@@ -242,7 +309,7 @@ def invoke(
     t1 = time.monotonic()
     repair_input_sha256 = _sha256(repair_prompt)
 
-    repair_response = _call_gemini(repair_prompt)
+    repair_response = _call_gemini(repair_prompt, agent_name=f"{agent_name}:repair", job_id=job_id)
     repair_output_sha256 = _sha256(repair_response)
     repair_latency_ms = int((time.monotonic() - t1) * 1000)
 
