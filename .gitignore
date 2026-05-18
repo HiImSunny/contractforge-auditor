@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Python virtual environment
+.venv/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Build output
+dist/
+
+# Environment files — never commit secrets
+.env
+.env.local
+
+# Python packaging
+*.egg-info/
+
+# Test caches
+.pytest_cache/
+.hypothesis/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Logs
+*.log
+
+# macOS metadata
+.DS_Store
+
+# Windows thumbnail cache
+Thumbs.db
+
+# Demo backup recording
+demo-backup.mp4
