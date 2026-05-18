@@ -28,7 +28,6 @@ export default function DashboardPage() {
   const isAnalyzing = status === "analyzing";
 
   if (status === "idle" && !report) return <Navigate to="/" replace />;
-
   if (status === "error" && error) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 flex flex-col items-center gap-6 text-center">

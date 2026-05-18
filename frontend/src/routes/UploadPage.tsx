@@ -23,13 +23,21 @@ export default function UploadPage() {
   const handleSubmit = async () => {
     if (!contract || !policy) return;
     await upload(contract, policy);
-    await analyze();
+    // Navigate immediately so progress strip is visible during analysis
     navigate("/dashboard");
+    analyze(); // fire and forget — store drives the UI
   };
 
   const handleLoadSample = async () => {
-    await loadSample();
-    navigate("/dashboard");
+    // loadSample does upload+analyze internally; we navigate after upload settles
+    // Use a small trick: watch status change to "analyzing" then navigate
+    const unsubscribe = useAnalysisStore.subscribe((state) => {
+      if (state.status === "analyzing" || state.status === "ready") {
+        navigate("/dashboard");
+        unsubscribe();
+      }
+    });
+    loadSample();
   };
 
   return (

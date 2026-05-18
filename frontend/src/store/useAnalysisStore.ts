@@ -12,6 +12,15 @@ export type AgentName =
   | "recommendation"
   | "report";
 
+const AGENT_ORDER: AgentName[] = [
+  "ingestion",
+  "clause_analysis",
+  "policy_mapping",
+  "risk_simulation",
+  "recommendation",
+  "report",
+];
+
 export interface AgentProgress {
   current: AgentName | null;
   completed: AgentName[];
@@ -87,7 +96,11 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
         const report = await api.analyzeWithProgress(id, (p) =>
           set({ agentProgress: p })
         );
-        set({ report, status: "ready" });
+        set({
+          report,
+          status: "ready",
+          agentProgress: { current: null, completed: [...AGENT_ORDER] },
+        });
       } catch (e) {
         set({ status: "error", error: toError(e) });
       }

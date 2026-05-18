@@ -25,7 +25,10 @@ export default function AgentProgress() {
   const { current, completed } = useAnalysisStore((s) => s.agentProgress);
   const status = useAnalysisStore((s) => s.status);
 
-  if (status !== "analyzing") return null;
+  // Show during analysis AND after completion (all green)
+  if (status !== "analyzing" && status !== "ready") return null;
+
+  const allDone = status === "ready";
 
   return (
     <div className="w-full border rounded-lg px-4 py-3 bg-muted/20">
@@ -34,8 +37,9 @@ export default function AgentProgress() {
       </p>
       <div className="flex items-center gap-0">
         {AGENT_ORDER.map((agent, idx) => {
-          const isDone = completed.includes(agent);
-          const isRunning = current === agent;
+          const isDone = allDone || completed.includes(agent);
+          const isRunning = !allDone && current === agent;
+
           return (
             <div key={agent} className="flex items-center flex-1 min-w-0">
               {/* Node */}
@@ -76,7 +80,9 @@ export default function AgentProgress() {
                 <div
                   className={cn(
                     "h-0.5 w-full max-w-[32px] shrink-0 rounded transition-all",
-                    completed.includes(AGENT_ORDER[idx + 1]) || isDone
+                    allDone || completed.includes(AGENT_ORDER[idx + 1])
+                      ? "bg-green-400"
+                      : isDone
                       ? "bg-green-400"
                       : isRunning
                       ? "bg-primary/40"
