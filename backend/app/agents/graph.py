@@ -52,14 +52,14 @@ def build_graph():
     g.add_node("policy_mapping",  policy_mapping.run)
     g.add_node("risk_simulation", risk_simulation.run)
     g.add_node("recommendation",  recommendation.run)
-    g.add_node("report",          report.run)
+    g.add_node("report_gen",      report.run)
 
     g.set_entry_point("ingestion")
     g.add_edge("ingestion",       "clause_analysis")
     g.add_edge("clause_analysis", "policy_mapping")
     g.add_edge("policy_mapping",  "risk_simulation")
     g.add_edge("risk_simulation", "recommendation")
-    g.add_edge("recommendation",  "report")
-    g.add_edge("report",          END)
+    g.add_edge("recommendation",  "report_gen")
+    g.add_edge("report_gen",      END)
 
     return g.compile()
