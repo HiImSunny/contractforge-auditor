@@ -36,7 +36,6 @@ export default function AgentProgress() {
         {AGENT_ORDER.map((agent, idx) => {
           const isDone = completed.includes(agent);
           const isRunning = current === agent;
-          const isPending = !isDone && !isRunning;
           return (
             <div key={agent} className="flex items-center flex-1 min-w-0">
               {/* Node */}
