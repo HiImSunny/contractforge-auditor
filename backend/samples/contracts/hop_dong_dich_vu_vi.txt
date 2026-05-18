@@ -1,0 +1,155 @@
+HỢP ĐỒNG DỊCH VỤ PHÁT TRIỂN PHẦN MỀM
+
+Số hợp đồng: HDPPM-2025-001
+Ngày ký kết: 01 tháng 01 năm 2025
+
+HỢP ĐỒNG DỊCH VỤ PHÁT TRIỂN PHẦN MỀM ("Hợp Đồng") này được ký kết bởi và giữa:
+
+BÊN A (BÊN CUNG CẤP DỊCH VỤ):
+Công ty TNHH Giải Pháp Số ABC
+Địa chỉ: 123 Đường Nguyễn Huệ, Quận 1, Thành phố Hồ Chí Minh, Việt Nam
+Mã số thuế: 0312345678
+Người đại diện theo pháp luật: Ông Nguyễn Văn Minh – Giám đốc
+(Sau đây gọi là "Bên A")
+
+BÊN B (BÊN SỬ DỤNG DỊCH VỤ):
+Công ty Cổ Phần XYZ
+Địa chỉ: 456 Đường Lê Lợi, Quận 3, Thành phố Hồ Chí Minh, Việt Nam
+Mã số thuế: 0398765432
+Người đại diện theo pháp luật: Bà Trần Thị Lan – Tổng Giám đốc
+(Sau đây gọi là "Bên B")
+
+Bên A và Bên B được gọi chung là "Các Bên" và riêng lẻ là "Bên".
+
+XÉT RẰNG, Bên A có năng lực và kinh nghiệm trong lĩnh vực phát triển phần mềm và cung cấp các giải pháp công nghệ thông tin; và Bên B mong muốn thuê Bên A cung cấp các dịch vụ phát triển phần mềm theo các điều khoản và điều kiện được quy định trong Hợp Đồng này.
+
+NAY, CÁC BÊN THỎA THUẬN như sau:
+
+
+ĐIỀU 1: ĐỊNH NGHĨA
+
+1.1 "Dịch Vụ" có nghĩa là các dịch vụ phát triển phần mềm, tư vấn công nghệ, và các dịch vụ liên quan được Bên A cung cấp cho Bên B theo Hợp Đồng này và các Phụ lục đính kèm.
+
+1.2 "Sản Phẩm Phần Mềm" có nghĩa là tất cả các phần mềm, ứng dụng, mã nguồn, tài liệu kỹ thuật, và các sản phẩm phái sinh được tạo ra bởi Bên A trong quá trình thực hiện Dịch Vụ theo Hợp Đồng này.
+
+1.3 "Dữ Liệu Cá Nhân" có nghĩa là bất kỳ thông tin nào liên quan đến một cá nhân được xác định hoặc có thể xác định được, bao gồm nhưng không giới hạn ở tên, địa chỉ, số điện thoại, địa chỉ email, số chứng minh nhân dân, và các thông tin tương tự.
+
+1.4 "Thông Tin Bảo Mật" có nghĩa là bất kỳ thông tin nào được một Bên tiết lộ cho Bên kia, dù bằng văn bản, lời nói, hay hình thức khác, được đánh dấu là bảo mật hoặc mà theo bản chất của thông tin và hoàn cảnh tiết lộ, một người có lý trí sẽ hiểu là bảo mật.
+
+1.5 "Ngày Giao Hàng" có nghĩa là ngày mà Bên A phải hoàn thành và bàn giao Sản Phẩm Phần Mềm hoặc từng giai đoạn của Dịch Vụ cho Bên B, như được quy định trong Phụ lục về Tiến Độ Thực Hiện.
+
+1.6 "Sự Kiện Bất Khả Kháng" có nghĩa là bất kỳ sự kiện nào nằm ngoài tầm kiểm soát hợp lý của một Bên, bao gồm thiên tai, chiến tranh, bạo loạn, đình công, dịch bệnh, hoặc các hành động của cơ quan nhà nước.
+
+1.7 "Phụ Lục" có nghĩa là các tài liệu đính kèm Hợp Đồng này, bao gồm Phụ lục A (Phạm Vi Dịch Vụ), Phụ lục B (Tiến Độ Thực Hiện), và Phụ lục C (Bảng Giá Dịch Vụ).
+
+
+ĐIỀU 2: PHẠM VI DỊCH VỤ
+
+2.1 Mô Tả Dịch Vụ. Bên A đồng ý cung cấp cho Bên B các dịch vụ phát triển phần mềm theo yêu cầu kỹ thuật được mô tả chi tiết trong Phụ lục A đính kèm Hợp Đồng này, bao gồm:
+   (a) Phân tích yêu cầu và thiết kế hệ thống;
+   (b) Phát triển và lập trình phần mềm;
+   (c) Kiểm thử và đảm bảo chất lượng;
+   (d) Triển khai và cài đặt hệ thống;
+   (e) Đào tạo người dùng và chuyển giao tài liệu kỹ thuật.
+
+2.2 Tiêu Chuẩn Thực Hiện. Bên A cam kết thực hiện Dịch Vụ theo tiêu chuẩn nghề nghiệp cao nhất, tuân thủ các quy trình phát triển phần mềm được công nhận trong ngành, và sử dụng đội ngũ nhân sự có đủ năng lực và kinh nghiệm.
+
+2.3 Tiến Độ Thực Hiện. Bên A sẽ thực hiện Dịch Vụ theo tiến độ được quy định trong Phụ lục B. Bất kỳ thay đổi nào về tiến độ phải được cả hai Bên đồng ý bằng văn bản.
+
+2.4 Hợp Tác Của Bên B. Bên B đồng ý cung cấp cho Bên A tất cả thông tin, tài liệu, và sự hỗ trợ cần thiết để Bên A thực hiện Dịch Vụ một cách hiệu quả. Bên B sẽ chỉ định một đầu mối liên lạc chịu trách nhiệm phối hợp với Bên A trong suốt quá trình thực hiện Hợp Đồng.
+
+2.5 Thay Đổi Phạm Vi. Nếu Bên B yêu cầu thay đổi phạm vi Dịch Vụ, Bên A sẽ đánh giá tác động của thay đổi đó đối với tiến độ và chi phí, và trình bày đề xuất thay đổi bằng văn bản. Thay đổi phạm vi chỉ có hiệu lực khi được cả hai Bên ký kết bằng văn bản.
+
+
+ĐIỀU 3: GIÁ TRỊ HỢP ĐỒNG VÀ THANH TOÁN
+
+3.1 Giá Trị Hợp Đồng. Tổng giá trị Hợp Đồng là 500.000.000 đồng Việt Nam (Năm trăm triệu đồng), chưa bao gồm thuế giá trị gia tăng (VAT) theo quy định của pháp luật Việt Nam. Chi tiết về cơ cấu giá được quy định trong Phụ lục C.
+
+3.2 Lịch Thanh Toán. Bên B thanh toán theo các đợt sau:
+   (a) Đợt 1: 30% giá trị hợp đồng (150.000.000 đồng) trong vòng 7 ngày kể từ ngày ký kết Hợp Đồng;
+   (b) Đợt 2: 40% giá trị hợp đồng (200.000.000 đồng) khi Bên A hoàn thành và bàn giao giai đoạn phát triển;
+   (c) Đợt 3: 30% giá trị hợp đồng (150.000.000 đồng) khi Bên A hoàn thành toàn bộ Dịch Vụ và được Bên B nghiệm thu.
+
+3.3 Điều Kiện Thanh Toán. Bên B thanh toán trong vòng 60 ngày kể từ ngày nhận hóa đơn hợp lệ từ Bên A, không có lãi suất chậm trả áp dụng cho các khoản thanh toán trễ hạn. Thanh toán được thực hiện bằng chuyển khoản ngân hàng vào tài khoản do Bên A chỉ định.
+
+3.4 Hóa Đơn. Bên A sẽ xuất hóa đơn VAT hợp lệ cho từng đợt thanh toán theo quy định của pháp luật Việt Nam. Hóa đơn phải bao gồm mô tả chi tiết về Dịch Vụ đã thực hiện và số tiền tương ứng.
+
+3.5 Tranh Chấp Hóa Đơn. Nếu Bên B có tranh chấp về bất kỳ khoản nào trong hóa đơn, Bên B phải thông báo bằng văn bản cho Bên A trong vòng 10 ngày kể từ ngày nhận hóa đơn. Bên B phải thanh toán phần không tranh chấp đúng hạn.
+
+
+ĐIỀU 4: BẢO MẬT VÀ BẢO VỆ DỮ LIỆU CÁ NHÂN
+
+4.1 Nghĩa Vụ Bảo Mật. Mỗi Bên đồng ý: (a) giữ bí mật tuyệt đối Thông Tin Bảo Mật của Bên kia; (b) không tiết lộ Thông Tin Bảo Mật của Bên kia cho bất kỳ bên thứ ba nào mà không có sự đồng ý trước bằng văn bản của Bên tiết lộ; và (c) chỉ sử dụng Thông Tin Bảo Mật của Bên kia cho mục đích thực hiện Hợp Đồng này.
+
+4.2 Bảo Vệ Dữ Liệu Cá Nhân. Các Bên cam kết tuân thủ các quy định của pháp luật Việt Nam về bảo vệ dữ liệu cá nhân, bao gồm Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân. Bên A sẽ xử lý Dữ Liệu Cá Nhân chỉ theo hướng dẫn của Bên B và chỉ cho mục đích thực hiện Dịch Vụ.
+
+4.3 Chuyển Dữ Liệu Ra Nước Ngoài. Bên A có thể chuyển dữ liệu cá nhân ra nước ngoài theo quyết định của mình khi cần thiết cho việc cung cấp Dịch Vụ. Bên B đồng ý với việc chuyển dữ liệu như vậy và thừa nhận rằng các quốc gia nhận dữ liệu có thể không có mức độ bảo vệ dữ liệu tương đương với Việt Nam.
+
+4.4 Biện Pháp Bảo Mật. Bên A sẽ thực hiện các biện pháp kỹ thuật và tổ chức phù hợp để bảo vệ Dữ Liệu Cá Nhân khỏi truy cập trái phép, tiết lộ, thay đổi, hoặc phá hủy.
+
+4.5 Thời Hạn Bảo Mật. Nghĩa vụ bảo mật theo Điều này sẽ tiếp tục có hiệu lực trong thời hạn 03 (ba) năm sau khi Hợp Đồng chấm dứt hoặc hết hạn.
+
+4.6 Luật Điều Chỉnh và Giải Quyết Tranh Chấp. Hợp Đồng này được điều chỉnh bởi pháp luật Việt Nam. Mọi tranh chấp phát sinh từ hoặc liên quan đến Hợp Đồng này sẽ được giải quyết tại Tòa án Nhân dân Thành phố Hồ Chí Minh.
+
+
+ĐIỀU 5: VI PHẠM VÀ PHẠT VI PHẠM
+
+5.1 Vi Phạm Tiến Độ. Nếu Bên A không hoàn thành và bàn giao Sản Phẩm Phần Mềm hoặc bất kỳ giai đoạn nào của Dịch Vụ đúng theo tiến độ quy định trong Phụ lục B mà không có lý do chính đáng, Bên A phải chịu phạt vi phạm bằng 10% (mười phần trăm) tổng giá trị Hợp Đồng cho mỗi tuần chậm trễ, tối đa không vượt quá 10% (mười phần trăm) tổng giá trị Hợp Đồng.
+
+5.2 Vi Phạm Chất Lượng. Nếu Sản Phẩm Phần Mềm không đáp ứng các tiêu chuẩn chất lượng được quy định trong Phụ lục A, Bên A phải khắc phục các lỗi trong vòng 30 ngày kể từ ngày nhận được thông báo từ Bên B. Nếu Bên A không khắc phục trong thời hạn này, Bên B có quyền yêu cầu bồi thường thiệt hại thực tế.
+
+5.3 Vi Phạm Bảo Mật. Nếu Bên A vi phạm nghĩa vụ bảo mật theo Điều 4, Bên A phải bồi thường toàn bộ thiệt hại thực tế mà Bên B phải chịu do vi phạm đó gây ra.
+
+5.4 Thủ Tục Phạt Vi Phạm. Bên B phải thông báo bằng văn bản cho Bên A về vi phạm và yêu cầu phạt vi phạm. Bên A có quyền phản hồi và giải trình trong vòng 10 ngày kể từ ngày nhận được thông báo.
+
+
+ĐIỀU 6: BẤT KHẢ KHÁNG
+
+6.1 Định Nghĩa. Sự Kiện Bất Khả Kháng là bất kỳ sự kiện nào nằm ngoài tầm kiểm soát hợp lý của một Bên, bao gồm nhưng không giới hạn ở: thiên tai (lũ lụt, động đất, bão), chiến tranh, bạo loạn, đình công toàn quốc, dịch bệnh được công bố bởi cơ quan có thẩm quyền, hoặc các quyết định của cơ quan nhà nước có thẩm quyền.
+
+6.2 Thông Báo. Bên bị ảnh hưởng bởi Sự Kiện Bất Khả Kháng phải thông báo bằng văn bản cho Bên kia trong vòng 05 (năm) ngày làm việc kể từ khi Sự Kiện Bất Khả Kháng xảy ra, mô tả bản chất của sự kiện và thời gian dự kiến bị ảnh hưởng.
+
+6.3 Miễn Trách Nhiệm. Trong thời gian xảy ra Sự Kiện Bất Khả Kháng, Bên bị ảnh hưởng được miễn trách nhiệm thực hiện các nghĩa vụ bị ảnh hưởng bởi sự kiện đó. Tuy nhiên, Bên bị ảnh hưởng phải nỗ lực hết sức để giảm thiểu tác động của Sự Kiện Bất Khả Kháng.
+
+6.4 Kéo Dài Bất Khả Kháng. Nếu Sự Kiện Bất Khả Kháng kéo dài, các Bên sẽ thương lượng để điều chỉnh tiến độ và các điều khoản liên quan của Hợp Đồng. Nếu không đạt được thỏa thuận, mỗi Bên có quyền chấm dứt Hợp Đồng bằng thông báo bằng văn bản.
+
+
+ĐIỀU 7: CHẤM DỨT HỢP ĐỒNG
+
+7.1 Chấm Dứt Theo Thỏa Thuận. Hợp Đồng có thể được chấm dứt bất kỳ lúc nào theo thỏa thuận bằng văn bản của cả hai Bên.
+
+7.2 Chấm Dứt Do Vi Phạm. Một Bên có quyền chấm dứt Hợp Đồng ngay lập tức bằng thông báo bằng văn bản nếu Bên kia vi phạm nghiêm trọng Hợp Đồng và không khắc phục vi phạm trong vòng 30 ngày kể từ ngày nhận được thông báo vi phạm.
+
+7.3 Chấm Dứt Do Mất Khả Năng Thanh Toán. Một Bên có quyền chấm dứt Hợp Đồng ngay lập tức nếu Bên kia mất khả năng thanh toán, bị tuyên bố phá sản, hoặc bị đặt dưới sự quản lý của cơ quan có thẩm quyền.
+
+7.4 Hậu Quả Chấm Dứt. Khi Hợp Đồng chấm dứt hoặc hết hạn: (a) tất cả các quyền và giấy phép được cấp theo Hợp Đồng này sẽ chấm dứt ngay lập tức; (b) mỗi Bên phải trả lại hoặc tiêu hủy Thông Tin Bảo Mật của Bên kia; và (c) Bên B phải thanh toán tất cả các khoản phí còn nợ cho Dịch Vụ đã được thực hiện đến ngày chấm dứt.
+
+7.5 Điều Khoản Còn Hiệu Lực. Các điều khoản sau đây sẽ tiếp tục có hiệu lực sau khi Hợp Đồng chấm dứt hoặc hết hạn: Điều 1, Điều 4, Điều 5, và Điều 8.
+
+
+ĐIỀU 8: ĐIỀU KHOẢN CHUNG
+
+8.1 Toàn Bộ Thỏa Thuận. Hợp Đồng này, cùng với tất cả các Phụ lục đính kèm, cấu thành toàn bộ thỏa thuận giữa các Bên về đối tượng của Hợp Đồng và thay thế tất cả các thỏa thuận, đàm phán, và thảo luận trước đó, dù bằng lời nói hay văn bản.
+
+8.2 Sửa Đổi. Hợp Đồng này chỉ có thể được sửa đổi hoặc bổ sung bằng văn bản có chữ ký của người đại diện có thẩm quyền của cả hai Bên.
+
+8.3 Không Từ Bỏ Quyền. Việc một Bên không thực hiện hoặc chậm thực hiện bất kỳ quyền nào theo Hợp Đồng này sẽ không được coi là từ bỏ quyền đó.
+
+8.4 Tính Độc Lập Của Các Điều Khoản. Nếu bất kỳ điều khoản nào của Hợp Đồng này bị tuyên bố vô hiệu hoặc không thể thi hành, các điều khoản còn lại vẫn tiếp tục có hiệu lực đầy đủ.
+
+8.5 Chuyển Nhượng. Không Bên nào được chuyển nhượng Hợp Đồng này hoặc bất kỳ quyền hay nghĩa vụ nào theo Hợp Đồng này mà không có sự đồng ý trước bằng văn bản của Bên kia.
+
+8.6 Thông Báo. Tất cả các thông báo theo Hợp Đồng này phải được lập thành văn bản và gửi đến địa chỉ của các Bên được ghi trong Hợp Đồng này bằng thư bảo đảm, fax có xác nhận, hoặc email có xác nhận đã nhận.
+
+8.7 Ngôn Ngữ. Hợp Đồng này được lập bằng tiếng Việt. Trong trường hợp có bất kỳ mâu thuẫn nào giữa bản tiếng Việt và bất kỳ bản dịch nào, bản tiếng Việt sẽ được ưu tiên áp dụng.
+
+8.8 Số Bản. Hợp Đồng này được lập thành 04 (bốn) bản có giá trị pháp lý như nhau, mỗi Bên giữ 02 (hai) bản.
+
+
+ĐẠI DIỆN BÊN A                              ĐẠI DIỆN BÊN B
+CÔNG TY TNHH GIẢI PHÁP SỐ ABC              CÔNG TY CỔ PHẦN XYZ
+
+Ký tên: ___________________________         Ký tên: ___________________________
+Họ và tên: Nguyễn Văn Minh                  Họ và tên: Trần Thị Lan
+Chức vụ: Giám đốc                           Chức vụ: Tổng Giám đốc
+Ngày: 01/01/2025                            Ngày: 01/01/2025

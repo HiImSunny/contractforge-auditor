@@ -1,0 +1,178 @@
+MASTER SERVICES AGREEMENT
+
+This Master Services Agreement ("Agreement") is entered into as of January 1, 2025 ("Effective Date") by and between:
+
+Acme Corp, a Delaware corporation with its principal place of business at 100 Innovation Drive, Wilmington, Delaware 19801, USA ("Provider");
+
+and
+
+TechStart Inc, a corporation with its principal place of business at 500 Startup Avenue, San Francisco, California 94105, USA ("Customer").
+
+Provider and Customer are each referred to herein individually as a "Party" and collectively as the "Parties."
+
+WHEREAS, Provider desires to provide certain software-as-a-service solutions to Customer, and Customer desires to obtain such services from Provider, subject to the terms and conditions set forth herein.
+
+NOW, THEREFORE, in consideration of the mutual covenants and agreements hereinafter set forth and for other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the Parties agree as follows:
+
+
+SECTION 1: DEFINITIONS
+
+1.1 "Authorized Users" means Customer's employees, contractors, and agents who are authorized by Customer to access and use the Services under the rights granted to Customer pursuant to this Agreement.
+
+1.2 "Confidential Information" means any information disclosed by either Party to the other Party, either directly or indirectly, in writing, orally, or by inspection of tangible objects, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and the circumstances of disclosure.
+
+1.3 "Customer Data" means all data, information, and content submitted, uploaded, or otherwise transmitted by Customer or its Authorized Users to the Services.
+
+1.4 "Documentation" means the technical and functional documentation for the Services made available by Provider to Customer, as updated from time to time.
+
+1.5 "Intellectual Property Rights" means all patents, copyrights, trademarks, trade secrets, and other proprietary rights recognized in any jurisdiction worldwide.
+
+1.6 "Order Form" means a written or electronic ordering document executed by the Parties that specifies the Services to be provided, applicable fees, and any other relevant terms.
+
+1.7 "Services" means the software-as-a-service products and related professional services provided by Provider to Customer as described in the applicable Order Form.
+
+1.8 "Subscription Term" means the period during which Customer is authorized to access and use the Services, as specified in the applicable Order Form.
+
+1.9 "Support Services" means the technical support and maintenance services provided by Provider to Customer in connection with the Services.
+
+
+SECTION 2: SUBSCRIPTION AND TERM
+
+2.1 Subscription Grant. Subject to the terms and conditions of this Agreement and payment of all applicable fees, Provider hereby grants to Customer a limited, non-exclusive, non-transferable, non-sublicensable right to access and use the Services during the Subscription Term solely for Customer's internal business purposes.
+
+2.2 Initial Term. The initial Subscription Term shall commence on the Effective Date and shall continue for a period of twelve (12) months, unless earlier terminated in accordance with Section 8 of this Agreement ("Initial Term").
+
+2.3 Renewal. Following the expiration of the Initial Term, this Agreement shall automatically renew for successive twelve (12) month periods (each, a "Renewal Term") unless either Party provides written notice of non-renewal to the other Party at least sixty (60) days prior to the expiration of the then-current term.
+
+2.4 Authorized Users. Customer shall ensure that only Authorized Users access and use the Services. Customer is responsible for all actions taken by its Authorized Users in connection with the Services.
+
+2.5 Restrictions. Customer shall not: (a) sublicense, sell, resell, transfer, assign, or otherwise dispose of the Services; (b) modify or make derivative works based upon the Services; (c) reverse engineer or access the Services in order to build a competitive product or service; or (d) use the Services in violation of applicable law.
+
+
+SECTION 3: FEES AND PAYMENT
+
+3.1 Fees. Customer shall pay Provider the fees set forth in the applicable Order Form ("Fees"). All Fees are stated in United States Dollars and are non-refundable except as expressly set forth in this Agreement.
+
+3.2 Invoicing. Provider shall issue invoices to Customer on a monthly basis or as otherwise specified in the applicable Order Form.
+
+3.3 Payment Terms. Customer shall pay all undisputed invoices within thirty (30) days of the invoice date. All payments shall be made by wire transfer, ACH, or such other method as the Parties may agree in writing.
+
+3.4 Taxes. All Fees are exclusive of applicable taxes. Customer is responsible for all sales, use, value-added, and similar taxes imposed by any governmental authority on the transactions contemplated by this Agreement, excluding taxes based on Provider's net income.
+
+3.5 Disputed Invoices. If Customer disputes any portion of an invoice in good faith, Customer shall: (a) pay the undisputed portion by the due date; (b) provide written notice to Provider of the disputed amount and the basis for the dispute within fifteen (15) days of the invoice date; and (c) cooperate with Provider to resolve the dispute promptly.
+
+3.6 Suspension for Non-Payment. If Customer fails to pay any undisputed amount when due, Provider may, upon written notice, suspend Customer's access to the Services until all overdue amounts are paid in full.
+
+
+SECTION 4: CONFIDENTIALITY
+
+4.1 Obligations. Each Party agrees to: (a) hold the other Party's Confidential Information in strict confidence; (b) not disclose the other Party's Confidential Information to any third party without the prior written consent of the disclosing Party; and (c) use the other Party's Confidential Information only for the purposes of performing its obligations or exercising its rights under this Agreement.
+
+4.2 Exceptions. The obligations in Section 4.1 shall not apply to information that: (a) is or becomes publicly available through no fault of the receiving Party; (b) was rightfully known to the receiving Party prior to disclosure; (c) is rightfully obtained by the receiving Party from a third party without restriction; or (d) is independently developed by the receiving Party without use of the disclosing Party's Confidential Information.
+
+4.3 Required Disclosure. If the receiving Party is required by law or court order to disclose Confidential Information, it shall provide the disclosing Party with prompt written notice (to the extent permitted by law) and shall cooperate with the disclosing Party in seeking a protective order.
+
+4.4 Return of Information. Upon termination or expiration of this Agreement, each Party shall promptly return or destroy all Confidential Information of the other Party in its possession.
+
+
+SECTION 5: DATA PROTECTION
+
+5.1 Data Processing. Provider shall process Customer Data solely in accordance with Customer's instructions and the terms of this Agreement. Provider shall implement and maintain appropriate technical and organizational measures to protect Customer Data against unauthorized access, disclosure, alteration, or destruction.
+
+5.2 Cross-Border Data Transfers. Provider may transfer Customer data to servers in any jurisdiction at its discretion. Customer acknowledges that such transfers may occur to countries that do not provide the same level of data protection as Customer's home jurisdiction.
+
+5.3 Data Breach Notification. In the event of a confirmed security breach affecting Customer Data, Provider will notify Customer of any data breach within 30 business days of Provider becoming aware of such breach. The notification shall include a description of the nature of the breach, the categories and approximate number of data subjects affected, and the measures taken or proposed to address the breach.
+
+5.4 Data Retention. Provider shall retain Customer Data for the duration of the Subscription Term and for a reasonable period thereafter as required by applicable law or Provider's standard data retention practices.
+
+5.5 Subprocessors. Provider may engage third-party subprocessors to assist in providing the Services. Provider shall ensure that any subprocessors are bound by data protection obligations no less protective than those set forth in this Agreement.
+
+5.6 Customer Responsibilities. Customer is responsible for ensuring that its collection and submission of Customer Data to the Services complies with all applicable laws and regulations, including obtaining any necessary consents from data subjects.
+
+
+SECTION 6: SERVICE LEVELS
+
+6.1 Uptime Commitment. Provider shall use commercially reasonable efforts to ensure that the Services are available to Customer at least 99.5% of the time in any given calendar month, excluding scheduled maintenance windows and circumstances beyond Provider's reasonable control ("Uptime Commitment").
+
+6.2 Scheduled Maintenance. Provider shall provide Customer with at least forty-eight (48) hours advance notice of any scheduled maintenance that is expected to result in Service unavailability. Provider shall use commercially reasonable efforts to schedule maintenance during off-peak hours.
+
+6.3 Measurement. Uptime shall be measured on a monthly basis as the percentage of total minutes in a calendar month during which the Services are available, excluding scheduled maintenance windows.
+
+6.4 Support. Provider shall provide Customer with technical support during Provider's standard business hours. Provider shall use commercially reasonable efforts to respond to support requests within one (1) business day.
+
+6.5 Exclusions. The Uptime Commitment does not apply to unavailability caused by: (a) Customer's acts or omissions; (b) third-party services or infrastructure not under Provider's control; (c) force majeure events; or (d) scheduled maintenance.
+
+
+SECTION 7: LIMITATION OF LIABILITY
+
+7.1 Exclusion of Consequential Damages. IN NO EVENT SHALL EITHER PARTY BE LIABLE TO THE OTHER FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, LOSS OF DATA, LOSS OF GOODWILL, OR BUSINESS INTERRUPTION, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, EVEN IF SUCH PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+7.2 Liability Cap. Provider's total liability to Customer for any and all claims arising out of or related to this Agreement, whether in contract, tort, or otherwise, shall not exceed $5,000 regardless of the nature of the claim. This limitation applies in aggregate to all claims made during the entire term of this Agreement.
+
+7.3 Essential Basis. The Parties acknowledge that the limitations of liability in this Section 7 reflect a reasonable allocation of risk and are an essential element of the basis of the bargain between the Parties. Provider would not have entered into this Agreement without these limitations.
+
+7.4 Exceptions. The limitations in this Section 7 shall not apply to: (a) Customer's payment obligations; (b) either Party's indemnification obligations; or (c) either Party's liability for fraud or willful misconduct.
+
+
+SECTION 8: TERMINATION
+
+8.1 Termination for Convenience. Either Party may terminate this Agreement for any reason or no reason upon thirty (30) days' prior written notice to the other Party.
+
+8.2 Termination for Cause. Either Party may terminate this Agreement immediately upon written notice if the other Party: (a) materially breaches this Agreement and fails to cure such breach within thirty (30) days after receiving written notice of the breach; or (b) becomes insolvent, makes an assignment for the benefit of creditors, or becomes subject to bankruptcy or similar proceedings.
+
+8.3 Effect of Termination. Upon termination or expiration of this Agreement: (a) all rights and licenses granted to Customer shall immediately terminate; (b) Customer shall cease all use of the Services; (c) each Party shall return or destroy the other Party's Confidential Information; and (d) Provider shall make Customer Data available for export for a period of thirty (30) days following termination.
+
+8.4 Survival. The following provisions shall survive termination or expiration of this Agreement: Sections 1, 4, 5.4, 7, 8.3, 8.4, and 10.
+
+
+SECTION 9: FORCE MAJEURE
+
+9.1 Force Majeure Events. Neither Party shall be liable for any delay or failure to perform its obligations under this Agreement to the extent such delay or failure is caused by circumstances beyond such Party's reasonable control, including acts of God, natural disasters, war, terrorism, riots, embargoes, acts of civil or military authorities, fire, floods, accidents, pandemics, or failures of third-party telecommunications or internet infrastructure ("Force Majeure Event").
+
+9.2 Notice. The Party affected by a Force Majeure Event shall provide prompt written notice to the other Party describing the nature of the Force Majeure Event and its expected duration.
+
+9.3 Mitigation. The affected Party shall use commercially reasonable efforts to mitigate the effects of the Force Majeure Event and to resume performance as soon as reasonably practicable.
+
+9.4 Extended Force Majeure. If a Force Majeure Event continues for an extended period, either Party may terminate this Agreement upon written notice to the other Party.
+
+
+SECTION 10: GOVERNING LAW AND DISPUTE RESOLUTION
+
+10.1 Governing Law. This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, USA, without regard to its conflict of laws principles.
+
+10.2 Dispute Resolution. The Parties shall attempt to resolve any dispute arising out of or relating to this Agreement through good-faith negotiation. If the Parties are unable to resolve the dispute through negotiation within thirty (30) days, either Party may submit the dispute to binding arbitration in accordance with the rules of the American Arbitration Association.
+
+10.3 Arbitration. Any arbitration shall be conducted in Wilmington, Delaware, USA, in the English language. The arbitrator's decision shall be final and binding on the Parties and may be entered as a judgment in any court of competent jurisdiction.
+
+10.4 Injunctive Relief. Notwithstanding the foregoing, either Party may seek injunctive or other equitable relief in any court of competent jurisdiction to prevent irreparable harm.
+
+10.5 Class Action Waiver. Each Party waives any right to bring or participate in any class action or representative proceeding against the other Party.
+
+
+SECTION 11: GENERAL PROVISIONS
+
+11.1 Entire Agreement. This Agreement, together with all Order Forms and exhibits attached hereto, constitutes the entire agreement between the Parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements, understandings, negotiations, and discussions, whether oral or written.
+
+11.2 Amendments. This Agreement may not be amended or modified except by a written instrument signed by authorized representatives of both Parties.
+
+11.3 Waiver. No waiver of any provision of this Agreement shall be effective unless in writing and signed by the waiving Party. No waiver shall be deemed a continuing waiver or a waiver of any other provision.
+
+11.4 Severability. If any provision of this Agreement is held to be invalid, illegal, or unenforceable, the remaining provisions shall continue in full force and effect.
+
+11.5 Assignment. Neither Party may assign this Agreement or any of its rights or obligations hereunder without the prior written consent of the other Party, except that either Party may assign this Agreement in connection with a merger, acquisition, or sale of all or substantially all of its assets.
+
+11.6 Notices. All notices under this Agreement shall be in writing and shall be delivered by email with confirmation of receipt, overnight courier, or certified mail to the addresses set forth in the applicable Order Form.
+
+11.7 Counterparts. This Agreement may be executed in counterparts, each of which shall be deemed an original, and all of which together shall constitute one and the same instrument.
+
+11.8 Independent Contractors. The Parties are independent contractors. Nothing in this Agreement shall be construed to create a partnership, joint venture, agency, employment, or fiduciary relationship between the Parties.
+
+
+IN WITNESS WHEREOF, the Parties have executed this Master Services Agreement as of the Effective Date.
+
+ACME CORP                                    TECHSTART INC
+
+By: _______________________________          By: _______________________________
+Name: Jonathan R. Mitchell                   Name: Sarah L. Chen
+Title: Chief Executive Officer               Title: Chief Executive Officer
+Date: January 1, 2025                        Date: January 1, 2025

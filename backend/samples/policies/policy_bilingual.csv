@@ -1,0 +1,11 @@
+policy_rule_id,risk_category,severity,description_en,description_vi
+POL-LG-001,legal,high,"Liability cap must be at least 12 months of fees.","Mức trần trách nhiệm tối thiểu bằng 12 tháng phí dịch vụ."
+POL-FN-001,financial,medium,"Late payment interest must be ≥ 1% per month.","Lãi suất chậm trả tối thiểu 1%/tháng."
+POL-OP-001,operational,medium,"Service level credits required for >0.5% downtime.","Bồi thường SLA bắt buộc khi downtime >0.5%."
+POL-CP-001,compliance,high,"Governing law must be the buyer's jurisdiction.","Luật điều chỉnh phải là pháp luật của Bên Mua."
+POL-DP-001,data_privacy,critical,"Cross-border transfer requires SCCs or equivalent.","Chuyển dữ liệu xuyên biên giới phải có SCC hoặc tương đương."
+POL-DP-002,data_privacy,high,"Breach notification within 72 hours is mandatory.","Bắt buộc thông báo sự cố trong vòng 72 giờ."
+POL-DP-003,data_privacy,medium,"Data retention period must be stated explicitly.","Phải nêu rõ thời hạn lưu trữ dữ liệu."
+POL-LG-002,legal,medium,"Force majeure must define a 30-day cure window.","Bất khả kháng phải quy định thời hạn khắc phục 30 ngày."
+POL-CP-002,compliance,medium,"Subprocessor list must be disclosed in writing.","Danh sách bên xử lý phụ phải được công bố bằng văn bản."
+POL-FN-002,financial,low,"Penalty for late delivery must not exceed 8% of contract value.","Phạt chậm giao không vượt quá 8% giá trị hợp đồng."
