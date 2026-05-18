@@ -126,14 +126,39 @@ def _call_gemini(prompt: str) -> str:
     Uses the model name from the ``GEMINI_MODEL`` environment variable,
     defaulting to ``"gemini-1.5-flash"``.  The ``response_mime_type`` is
     set to ``"application/json"`` so the model is constrained to emit JSON.
+
+    When ``LOBSTERTRAP_URL`` is set, all calls are routed through the
+    Lobster Trap DPI proxy (Veea) which enforces the policy in
+    ``configs/lobstertrap_policy.yaml`` before the prompt reaches Gemini.
+    This provides prompt injection detection, PII exfiltration prevention,
+    credential leak blocking, and a full governance audit trail at the
+    network layer — complementing the application-level GUARDRAIL prefix
+    and audit log already in place.
     """
     import google.generativeai as genai  # type: ignore[import]
+    from google.api_core import client_options as client_options_lib  # type: ignore[import]
 
     api_key = os.environ.get("GOOGLE_API_KEY", "")
-    if api_key:
-        genai.configure(api_key=api_key)
-
     model_name = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+    lobstertrap_url = os.environ.get("LOBSTERTRAP_URL", "").rstrip("/")
+
+    if lobstertrap_url:
+        # Route through Lobster Trap DPI proxy.
+        # The proxy is OpenAI-compatible and forwards to the real Gemini
+        # endpoint (configured via LOBSTERTRAP_UPSTREAM in the proxy).
+        # We override the api_endpoint so the SDK sends to the proxy instead.
+        options = client_options_lib.ClientOptions(
+            api_endpoint=lobstertrap_url,
+        )
+        if api_key:
+            genai.configure(api_key=api_key, client_options=options)
+        else:
+            genai.configure(client_options=options)
+    else:
+        # Direct Gemini API (no proxy)
+        if api_key:
+            genai.configure(api_key=api_key)
+
     model = genai.GenerativeModel(
         model_name=model_name,
         generation_config={"response_mime_type": "application/json"},

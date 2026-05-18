@@ -15,5 +15,9 @@ services:
         value: gemini-1.5-flash
       - key: PORT
         value: "8000"
+      # Lobster Trap DPI proxy — leave empty on Render (proxy runs locally only)
+      # Set to your proxy URL if self-hosting Lobster Trap on a separate service
+      - key: LOBSTERTRAP_URL
+        value: ""
     healthCheckPath: /api/health
     autoDeploy: false

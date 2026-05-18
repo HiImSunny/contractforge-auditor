@@ -1,0 +1,71 @@
+# ContractForge Auditor — Local development stack
+#
+# Services:
+#   backend      — FastAPI app (Python 3.12)
+#   lobstertrap  — Veea Lobster Trap DPI proxy (sits between backend and Gemini)
+#   frontend     — Vite dev server (optional, run manually with `npm run dev`)
+#
+# Usage:
+#   docker compose up --build
+#
+# Lobster Trap routes all Gemini calls through deep prompt inspection,
+# enforcing the policy in configs/lobstertrap_policy.yaml before any
+# prompt reaches the Gemini API.
+
+version: "3.9"
+
+services:
+
+  # ── Lobster Trap DPI Proxy ─────────────────────────────────────────────────
+  lobstertrap:
+    image: ghcr.io/veea-ai/lobstertrap:latest
+    # Fallback: build from source if image not available
+    # build:
+    #   context: https://github.com/veea-ai/lobstertrap.git
+    pull_policy: always
+    ports:
+      - "8080:8080"       # Proxy port — backend sends Gemini calls here
+      - "8081:8081"       # Dashboard UI
+    volumes:
+      - ./configs/lobstertrap_policy.yaml:/etc/lobstertrap/policy.yaml:ro
+    environment:
+      # Forward to real Gemini API
+      LOBSTERTRAP_UPSTREAM: "https://generativelanguage.googleapis.com"
+      LOBSTERTRAP_POLICY: "/etc/lobstertrap/policy.yaml"
+      LOBSTERTRAP_PORT: "8080"
+      LOBSTERTRAP_DASHBOARD_PORT: "8081"
+      LOBSTERTRAP_LOG_LEVEL: "info"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ── Backend (FastAPI) ──────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:5173}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
+      PORT: "8000"
+      # Route Gemini calls through Lobster Trap proxy
+      LOBSTERTRAP_URL: "http://lobstertrap:8080"
+    depends_on:
+      lobstertrap:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

@@ -26,3 +26,10 @@ if not GOOGLE_API_KEY:
 # ---------------------------------------------------------------------------
 FRONTEND_ORIGIN: str = os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")
 GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+
+# ---------------------------------------------------------------------------
+# Lobster Trap DPI proxy (optional — Veea Track 1 integration)
+# When set, all Gemini calls are routed through the proxy for deep prompt
+# inspection, policy enforcement, and governance audit trail.
+# ---------------------------------------------------------------------------
+LOBSTERTRAP_URL: str = os.environ.get("LOBSTERTRAP_URL", "")

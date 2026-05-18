@@ -1,0 +1,154 @@
+# ContractForge Auditor — Lobster Trap Policy Pack
+# Deep prompt inspection rules for legal contract governance pipeline.
+#
+# Lobster Trap sits between ContractForge agents and the Gemini backend,
+# enforcing P4-style firewall rules on every prompt and response.
+#
+# Rule evaluation: first-match-wins.
+# Actions: ALLOW | DENY | LOG | HUMAN_REVIEW | QUARANTINE | RATE_LIMIT
+
+version: "1"
+policy_name: "contractforge-legal-governance"
+description: >
+  Security policy for ContractForge Auditor multi-agent pipeline.
+  Protects against prompt injection from untrusted contract content,
+  PII exfiltration, credential leakage, and adversarial inputs.
+
+rules:
+
+  # ── 1. CREDENTIAL EXFILTRATION PROTECTION ─────────────────────────────────
+  # Block any prompt or response that contains API keys, tokens, or secrets.
+  - id: "CF-SEC-001"
+    name: "Block credential exfiltration"
+    description: >
+      Detects and blocks prompts or responses containing API keys,
+      bearer tokens, private keys, or other credentials. Prevents
+      contract content from being used to exfiltrate secrets.
+    match:
+      any:
+        - credentials: true
+        - pattern: "(GOOGLE_API_KEY|bearer\\s+[A-Za-z0-9\\-._~+/]+=*|sk-[A-Za-z0-9]{32,}|AIza[A-Za-z0-9\\-_]{35})"
+    action: DENY
+    log: true
+    message: "Credential exfiltration attempt blocked by CF-SEC-001"
+
+  # ── 2. PROMPT INJECTION DETECTION ─────────────────────────────────────────
+  # Detect injection attempts embedded in contract text.
+  - id: "CF-SEC-002"
+    name: "Detect prompt injection in contract content"
+    description: >
+      Identifies prompt injection patterns in CONTRACT_TEXT or POLICY_TEXT
+      blocks — instructions to ignore guardrails, role changes, system
+      message overrides, or tool-call attempts.
+    match:
+      any:
+        - injections: true
+        - pattern: "(?i)(ignore (previous|prior|above|all) instructions|you are now|new (role|persona|system|instruction)|disregard (your|the) (rules|guidelines|instructions)|forget (everything|all)|act as (if|a|an)|\\[SYSTEM\\]|<system>|</system>)"
+    action: QUARANTINE
+    log: true
+    message: "Prompt injection attempt detected and quarantined by CF-SEC-002"
+
+  # ── 3. PII EXFILTRATION DETECTION ─────────────────────────────────────────
+  # Log and flag responses that contain PII patterns.
+  - id: "CF-SEC-003"
+    name: "Detect PII in agent responses"
+    description: >
+      Flags agent responses containing email addresses, phone numbers,
+      or government ID patterns that should have been redacted by the
+      backend redaction layer. Triggers HUMAN_REVIEW for audit.
+    match:
+      response: true
+      any:
+        - pii: true
+        - pattern: "([a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}|\\b\\d{3}[\\s\\-.]?\\d{3}[\\s\\-.]?\\d{4}\\b|\\b[A-Z]{1,2}\\d{6,9}\\b)"
+    action: HUMAN_REVIEW
+    log: true
+    message: "PII detected in agent response — flagged for review by CF-SEC-003"
+
+  # ── 4. EXFILTRATION PATTERN DETECTION ─────────────────────────────────────
+  # Block attempts to exfiltrate data to external domains.
+  - id: "CF-SEC-004"
+    name: "Block data exfiltration via external domains"
+    description: >
+      Detects prompts instructing the model to send data to external URLs,
+      webhooks, or domains not in the approved list.
+    match:
+      any:
+        - exfiltration: true
+        - pattern: "(?i)(send (this|the|all|data|content) to|post (to|this to)|curl |wget |http(s)?://(?!generativelanguage\\.googleapis\\.com))"
+    action: DENY
+    log: true
+    message: "Data exfiltration attempt blocked by CF-SEC-004"
+
+  # ── 5. DECLARED VS DETECTED INTENT MISMATCH ───────────────────────────────
+  # Flag when declared agent intent doesn't match detected intent.
+  - id: "CF-GOV-001"
+    name: "Intent mismatch detection"
+    description: >
+      Uses _lobstertrap metadata to compare declared agent intent
+      (e.g. "clause_analysis") against detected intent category.
+      Mismatches are logged for governance audit trail.
+    match:
+      intent_mismatch: true
+    action: LOG
+    log: true
+    message: "Declared vs detected intent mismatch logged by CF-GOV-001"
+
+  # ── 6. RISKY COMMAND DETECTION ────────────────────────────────────────────
+  # Block prompts containing shell commands or code execution patterns.
+  - id: "CF-SEC-005"
+    name: "Block risky command execution patterns"
+    description: >
+      Detects prompts that attempt to embed shell commands, Python exec,
+      or other code execution patterns in contract content.
+    match:
+      any:
+        - risky_commands: true
+        - pattern: "(?i)(exec\\(|eval\\(|subprocess|os\\.system|__import__|import os|import sys|rm -rf|del /f|format c:)"
+    action: DENY
+    log: true
+    message: "Risky command pattern blocked by CF-SEC-005"
+
+  # ── 7. RATE LIMITING — INGESTION AGENT ────────────────────────────────────
+  # Prevent abuse of the ingestion endpoint.
+  - id: "CF-RATE-001"
+    name: "Rate limit ingestion agent calls"
+    description: >
+      Limits ingestion agent calls to prevent abuse and runaway costs.
+      Applies per source IP.
+    match:
+      agent: "ingestion"
+    action: RATE_LIMIT
+    rate_limit:
+      requests: 20
+      window_seconds: 60
+    log: true
+
+  # ── 8. SCHEMA DRIFT DETECTION ─────────────────────────────────────────────
+  # Log responses that don't match expected JSON schema structure.
+  - id: "CF-GOV-002"
+    name: "Log schema drift in agent responses"
+    description: >
+      Detects when agent responses deviate from expected JSON schema,
+      which may indicate model drift or adversarial manipulation.
+      Logged for observability dashboard.
+    match:
+      response: true
+      risk_score:
+        min: 60
+    action: LOG
+    log: true
+    message: "High-risk response logged for schema drift monitoring by CF-GOV-002"
+
+  # ── 9. ALLOW ALL LEGITIMATE PIPELINE TRAFFIC ──────────────────────────────
+  # Default allow for traffic that passes all security checks above.
+  - id: "CF-ALLOW-001"
+    name: "Allow legitimate agent pipeline traffic"
+    description: >
+      Default allow rule for all ContractForge agent prompts that pass
+      the security checks above. All allowed traffic is logged for the
+      governance audit trail.
+    match:
+      all: true
+    action: ALLOW
+    log: true
