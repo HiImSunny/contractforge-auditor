@@ -115,7 +115,7 @@ def run(state: PipelineState) -> dict:
     result: ReportNarrative = gemini_client.invoke(
         prompt,
         ReportNarrative,
-        "report",
+        "report_gen",
         job_id,
     )
 
@@ -128,12 +128,12 @@ def run(state: PipelineState) -> dict:
             "top_risks": result.top_risks,
             "risk_score": overall,
             "per_category_scores": per_category,
-            "clauses": state.get("clauses", []),
-            "clause_analyses": state.get("clause_analyses", []),
+            "clauses": state.get("clauses", []) or [],
+            "clause_analyses": state.get("clause_analyses", []) or [],
             "violations": violations,
-            "simulations": state.get("simulations", []),
-            "recommendations": state.get("recommendations", []),
-            "audit_trail": state.get("audit_entries", []),
+            "simulations": state.get("simulations", []) or [],
+            "recommendations": state.get("recommendations", []) or [],
+            "audit_trail": state.get("audit_entries", []) or [],
         }
     }
 

@@ -55,6 +55,8 @@ def _run_pipeline(job_id: str) -> None:
         graph = build_graph()
         final_state = graph.invoke(initial_state)
         report = final_state.get("report", {})
+        if not report:
+            logger.error("Pipeline completed but report is empty for job %s. State keys: %s", job_id, list(final_state.keys()))
         job_store.put(
             job_id,
             report=report,
@@ -62,7 +64,7 @@ def _run_pipeline(job_id: str) -> None:
             pipeline_status="done",
             pipeline_error=None,
         )
-        logger.info("Pipeline completed for job %s", job_id)
+        logger.info("Pipeline completed for job %s, report keys: %s", job_id, list(report.keys()) if report else [])
     except GeminiValidationError as e:
         logger.error(
             "AGENT_OUTPUT_INVALID job=%s agent=%s error=%s",
