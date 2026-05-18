@@ -15,6 +15,7 @@ interface Props {
 }
 
 export default function RiskHeatmap({ scores }: Props) {
+  if (!scores) return null;
   return (
     <div className="space-y-2">
       {(Object.keys(CATEGORY_LABELS) as Array<keyof PerCategoryScores>).map(

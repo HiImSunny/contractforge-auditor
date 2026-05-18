@@ -69,7 +69,8 @@ export const useAnalysisStore = create<AnalysisState>((set, get) => ({
     analyze: async () => {
       const id = get().jobId;
       if (!id) return;
-      set({ status: "analyzing", agentProgress: { current: "ingestion", completed: [] } });
+      // Clear previous report so stale data never reaches components
+      set({ status: "analyzing", report: null, error: null, agentProgress: { current: "ingestion", completed: [] } });
       try {
         const report = await api.analyzeWithProgress(id, (p) =>
           set({ agentProgress: p })

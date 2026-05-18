@@ -80,7 +80,7 @@ export default function SimulationPanel() {
             </span>
           </div>
           <p className="text-sm text-muted-foreground">{activeResult.narrative}</p>
-          {activeResult.affected_clause_ids.length > 0 && (
+          {activeResult.affected_clause_ids?.length > 0 && (
             <div className="flex flex-wrap gap-1">
               <span className="text-xs text-muted-foreground">Affected:</span>
               {activeResult.affected_clause_ids.map((id) => (

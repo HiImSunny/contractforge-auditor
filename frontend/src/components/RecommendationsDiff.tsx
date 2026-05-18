@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function RecommendationsDiff({ recommendations }: Props) {
-  if (recommendations.length === 0) {
+  if (!recommendations || recommendations.length === 0) {
     return <p className="text-sm text-muted-foreground">No recommendations.</p>;
   }
 

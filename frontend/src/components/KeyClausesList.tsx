@@ -7,6 +7,7 @@ interface Props {
 }
 
 export default function KeyClausesList({ clauses, analyses }: Props) {
+  if (!clauses || !analyses) return null;
   const analysisMap = new Map(analyses.map((a) => [a.clause_id, a]));
 
   return (
