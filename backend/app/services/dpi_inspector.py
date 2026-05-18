@@ -41,7 +41,6 @@ _INJECTION_PATTERNS = re.compile(
     r"|forget\s+(everything|all)"
     r"|act\s+as\s+(if|a|an)\s+"
     r"|\[SYSTEM\]|<system>|</system>"
-    r"|===\s*(END\s+)?GUARDRAIL"
     r"|override\s+(system|prompt|instruction)"
     r")"
 )
@@ -256,10 +255,14 @@ def inspect(prompt: str) -> DPIResult:
     This is the Python fallback used when Lobster Trap binary is not available.
     Uses the same regex patterns and policy rules as ``configs/lobstertrap_policy.yaml``.
 
+    Only the **untrusted user content** (CONTRACT_TEXT, POLICY_TEXT, CLAUSES
+    blocks) is inspected — the GUARDRAIL prefix and agent instructions are
+    trusted system text and are excluded from DPI to avoid false positives.
+
     Parameters
     ----------
     prompt:
-        The full prompt string to inspect (including GUARDRAIL prefix).
+        The full prompt string (including GUARDRAIL prefix).
 
     Returns
     -------
@@ -269,16 +272,35 @@ def inspect(prompt: str) -> DPIResult:
     """
     t0 = time.monotonic()
 
-    # ── Detect signals ────────────────────────────────────────────────────
+    # ── Extract only untrusted user content for inspection ────────────────
+    # The GUARDRAIL prefix and agent instructions are trusted system text.
+    # Only inspect what's inside the <<<...>>> delimiters (contract/policy
+    # content) to avoid false positives from the GUARDRAIL text itself.
+    user_content_pattern = re.compile(
+        r"<<<(.*?)>>>",
+        re.DOTALL,
+    )
+    user_content_blocks = user_content_pattern.findall(prompt)
+    inspect_text = "\n".join(user_content_blocks) if user_content_blocks else ""
+
+    # If no delimited blocks found, inspect the portion after END GUARDRAIL
+    if not inspect_text:
+        end_guardrail_match = re.search(r"=== END GUARDRAIL ===\s*", prompt)
+        if end_guardrail_match:
+            inspect_text = prompt[end_guardrail_match.end():]
+        else:
+            inspect_text = prompt
+
+    # ── Detect signals on untrusted content only ──────────────────────────
     signals: dict[str, bool] = {
-        "contains_injection_patterns": bool(_INJECTION_PATTERNS.search(prompt)),
-        "contains_role_impersonation": bool(_ROLE_IMPERSONATION.search(prompt)),
-        "contains_exfiltration": bool(_EXFILTRATION_PATTERNS.search(prompt)),
-        "contains_credentials": bool(_CREDENTIAL_PATTERNS.search(prompt)),
-        "contains_system_commands": bool(_SYSTEM_COMMANDS.search(prompt)),
-        "contains_sensitive_paths": bool(_SENSITIVE_PATHS.search(prompt)),
-        "contains_obfuscation": bool(_OBFUSCATION_PATTERNS.search(prompt)),
-        "contains_pii": bool(_PII_PATTERNS.search(prompt)),
+        "contains_injection_patterns": bool(_INJECTION_PATTERNS.search(inspect_text)),
+        "contains_role_impersonation": bool(_ROLE_IMPERSONATION.search(inspect_text)),
+        "contains_exfiltration": bool(_EXFILTRATION_PATTERNS.search(inspect_text)),
+        "contains_credentials": bool(_CREDENTIAL_PATTERNS.search(inspect_text)),
+        "contains_system_commands": bool(_SYSTEM_COMMANDS.search(inspect_text)),
+        "contains_sensitive_paths": bool(_SENSITIVE_PATHS.search(inspect_text)),
+        "contains_obfuscation": bool(_OBFUSCATION_PATTERNS.search(inspect_text)),
+        "contains_pii": bool(_PII_PATTERNS.search(inspect_text)),
     }
 
     # ── Compute composite risk score ──────────────────────────────────────
