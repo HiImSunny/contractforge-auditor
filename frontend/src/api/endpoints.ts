@@ -39,41 +39,59 @@ export async function analyzeWithProgress(
   jobId: string,
   onProgress: (p: AgentProgress) => void
 ): Promise<GovernanceReport> {
-  // Kick off the pipeline (returns immediately with status: "processing")
+  // Kick off the pipeline
   await analyze(jobId);
 
-  // Poll both status endpoint and audit trail every 2s
   return new Promise((resolve, reject) => {
-    const interval = setInterval(async () => {
-      try {
-        // Update agent progress from audit trail
-        const entries = await getAuditTrail(jobId);
-        const completedAgents = entries
-          .map((e) => e.agent_name as AgentName)
-          .filter((name) => AGENT_ORDER.includes(name));
-        const newCompleted = [...new Set(completedAgents)];
-        const nextIdx = newCompleted.length;
-        const current = nextIdx < AGENT_ORDER.length ? AGENT_ORDER[nextIdx] : null;
-        onProgress({ current, completed: newCompleted });
+    const completed: AgentName[] = [];
+    const apiBase = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+    const es = new EventSource(`${apiBase}/api/analyze/stream/${jobId}`);
 
-        // Check pipeline status
-        const statusRes = await apiFetch<{ status: string; report?: GovernanceReport; error?: unknown }>(
-          `/api/analyze/status/${jobId}`
-        );
-
-        if (statusRes.status === "done" && statusRes.report) {
-          clearInterval(interval);
-          onProgress({ current: null, completed: [...AGENT_ORDER] });
-          resolve(statusRes.report);
-        } else if (statusRes.status === "error") {
-          clearInterval(interval);
-          reject(statusRes.error ?? { error_code: "AGENT_FAILURE", message: "Pipeline failed" });
-        }
-      } catch (e) {
-        clearInterval(interval);
-        reject(e);
+    es.addEventListener("agent_start", (e) => {
+      const { agent } = JSON.parse(e.data) as { agent: AgentName };
+      if (AGENT_ORDER.includes(agent)) {
+        onProgress({ current: agent, completed: [...completed] });
       }
-    }, 2000);
+    });
+
+    es.addEventListener("agent_done", (e) => {
+      const { agent } = JSON.parse(e.data) as { agent: AgentName };
+      if (AGENT_ORDER.includes(agent) && !completed.includes(agent)) {
+        completed.push(agent);
+        const nextIdx = completed.length;
+        const current = nextIdx < AGENT_ORDER.length ? AGENT_ORDER[nextIdx] : null;
+        onProgress({ current, completed: [...completed] });
+      }
+    });
+
+    es.addEventListener("done", () => {
+      es.close();
+      onProgress({ current: null, completed: [...AGENT_ORDER] });
+      // Fetch the completed report
+      apiFetch<{ status: string; report?: GovernanceReport }>(
+        `/api/analyze/status/${jobId}`
+      ).then((res) => {
+        if (res.report) resolve(res.report);
+        else reject({ error_code: "EMPTY_REPORT", message: "Pipeline done but report missing" });
+      }).catch(reject);
+    });
+
+    es.addEventListener("error", (e) => {
+      es.close();
+      try {
+        const err = JSON.parse((e as MessageEvent).data ?? "{}");
+        reject(err);
+      } catch {
+        reject({ error_code: "STREAM_ERROR", message: "SSE connection error" });
+      }
+    });
+
+    // Fallback: if SSE not supported or connection drops, poll
+    es.onerror = () => {
+      if (es.readyState === EventSource.CLOSED) {
+        // Already handled by "done"/"error" events — ignore
+      }
+    };
   });
 }
 
