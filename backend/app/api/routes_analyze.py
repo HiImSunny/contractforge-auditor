@@ -64,7 +64,10 @@ def _run_pipeline(job_id: str) -> None:
         )
         logger.info("Pipeline completed for job %s", job_id)
     except GeminiValidationError as e:
-        logger.error("Validation error in job %s agent=%s: %s", job_id, e.agent_name, e.validation_error)
+        logger.error(
+            "AGENT_OUTPUT_INVALID job=%s agent=%s error=%s",
+            job_id, e.agent_name, e.validation_error
+        )
         job_store.put(
             job_id,
             pipeline_status="error",
@@ -75,7 +78,12 @@ def _run_pipeline(job_id: str) -> None:
             },
         )
     except Exception as e:
-        logger.exception("Unexpected error in pipeline for job %s", job_id)
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(
+            "AGENT_FAILURE job=%s agent=%s error=%s\n%s",
+            job_id, getattr(e, "agent_name", "unknown"), str(e), tb
+        )
         job_store.put(
             job_id,
             pipeline_status="error",
@@ -83,6 +91,7 @@ def _run_pipeline(job_id: str) -> None:
                 "error_code": "AGENT_FAILURE",
                 "agent": getattr(e, "agent_name", "unknown"),
                 "message": str(e),
+                "traceback": tb,
             },
         )
 
@@ -146,6 +155,11 @@ async def analyze_status(job_id: str):
         return {"status": "done", "report": job.get("report", {})}
 
     if status == "error":
-        return {"status": "error", "error": job.get("pipeline_error", {})}
+        err = job.get("pipeline_error", {})
+        # Log traceback server-side if present, don't expose to client
+        tb = err.pop("traceback", None)
+        if tb:
+            logger.error("Traceback for job %s:\n%s", job_id, tb)
+        return {"status": "error", "error": err}
 
     return {"status": status}

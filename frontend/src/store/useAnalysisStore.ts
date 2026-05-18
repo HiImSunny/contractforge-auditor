@@ -35,14 +35,26 @@ export interface AnalysisState {
 }
 
 function toError(e: unknown): { code: string; message: string } {
-  if (e && typeof e === "object" && "error_code" in e) {
-    return {
-      code: (e as { error_code: string }).error_code,
-      message:
-        "message" in e
-          ? String((e as { message: unknown }).message)
-          : String(e),
-    };
+  if (e && typeof e === "object") {
+    // Shape from /api/analyze/status: { error_code, agent, message }
+    if ("error_code" in e) {
+      const err = e as { error_code: string; agent?: string; message?: string };
+      const agent = err.agent ? ` [agent: ${err.agent}]` : "";
+      return {
+        code: err.error_code,
+        message: (err.message ?? String(e)) + agent,
+      };
+    }
+    // FastAPI HTTPException detail shape: { detail: { error_code, message } }
+    if ("detail" in e) {
+      const detail = (e as { detail: unknown }).detail;
+      if (detail && typeof detail === "object" && "error_code" in detail) {
+        const d = detail as { error_code: string; message?: string; agent?: string };
+        const agent = d.agent ? ` [agent: ${d.agent}]` : "";
+        return { code: d.error_code, message: (d.message ?? String(detail)) + agent };
+      }
+      return { code: "API_ERROR", message: String(detail) };
+    }
   }
   return { code: "UNKNOWN_ERROR", message: String(e) };
 }

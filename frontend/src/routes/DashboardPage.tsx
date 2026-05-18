@@ -24,11 +24,35 @@ function SectionSkeleton({ lines = 4 }: { lines?: number }) {
 export default function DashboardPage() {
   const report = useAnalysisStore((s) => s.report);
   const status = useAnalysisStore((s) => s.status);
+  const error = useAnalysisStore((s) => s.error);
+  const reset = useAnalysisStore((s) => s.actions.reset);
   const isAnalyzing = status === "analyzing";
 
   // Redirect to upload if no job started
   if (status === "idle" && !report) {
     return <Navigate to="/" replace />;
+  }
+
+  // Show error state clearly
+  if (status === "error" && error) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 flex flex-col items-center gap-6 text-center">
+        <div className="text-5xl">⚠️</div>
+        <div>
+          <h2 className="text-xl font-bold text-destructive mb-2">Analysis Failed</h2>
+          <p className="text-sm text-muted-foreground mb-1">
+            <span className="font-mono bg-muted px-1.5 py-0.5 rounded text-xs">{error.code}</span>
+          </p>
+          <p className="text-sm text-muted-foreground mt-3 max-w-lg">{error.message}</p>
+        </div>
+        <button
+          onClick={reset}
+          className="px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition"
+        >
+          Try Again
+        </button>
+      </div>
+    );
   }
 
   return (
